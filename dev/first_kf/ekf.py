@@ -2,7 +2,15 @@ import os
 import numpy as np
 import csv
 import matplotlib.pyplot as plt
+from numpy import genfromtxt
 import pickle
+
+
+#######################################
+##
+##    FIRST EXTENDED KALMAN FILTER
+##
+#######################################
 
 def first_ekf(mu, Sigma, Tc, E, w, F, G, Q_w, H, Q_o, o_r, o_w):
     """
@@ -53,6 +61,12 @@ def first_ekf(mu, Sigma, Tc, E, w, F, G, Q_w, H, Q_o, o_r, o_w):
 
     return mu_new, Sigma_new
     
+#######################################
+##
+##    PARSE DATA INTO NUMPY ARRAYS
+##
+#######################################
+
 def get_data_directory():
     """
     Get repository data directory.
@@ -65,20 +79,60 @@ def get_data_directory():
     os.chdir('../dev/first_kf/')
     return data_directory
 
+def gen_sensor_array(time_col, z_col, device_csv_array):
+    """
+    Create NumPy array given start and end rows and columns.
+    """
+    num_rows = len(device_csv_array)
+    return device_csv_array[0: num_rows-1][time_col: z_col]  
+
 def make_matrices():
     """
     Format IMU CSV data into Numpy matrices.
     """
     data_dir = get_data_directory()
+    '''
     # open csv file
     with open(os.path.join(data_dir, 'iphoneIMU.csv'), 'r') as csv_file
         csv_reader = csv.reader(csv_file, delimiter=',')
-        for 
-    
+        for row in csv_reader:
+            for col in row:
+                if '''
+    iphone_csv_array = genfromtxt(os.path.join(data_dir, 'iphoneIMU.csv'), delimiter=",", skip_header=1)
+    iwatch_csv_array = genfromtxt(os.path.join(data_dir, 'iWatchIMU.csv'), delimiter=",", skip_header=1)
 
+    ##################### create accel, gyro, magnetometer numpy arrays: iPhone #####################
+    # accel
+    accel_time_col = 18
+    accel_z_col = 21
+    iphone_accel = gen_sensor_array(accel_time_col, accel_z_col, iphone_csv_array)    
+
+    # gyro
+    gyro_time_col = 22
+    gyro_z_col = 25
+    iphone_gyro = gen_sensor_array(accel_time_col, accel_z_col, iphone_csv_array)  
+
+    # magnetometer
+    mag_time_col = 26
+    mag_z_col = 29
+    iphone_mag = gen_sensor_array(accel_time_col, accel_z_col, iphone_csv_array)  
+
+    ##################### create accel, gyro, magnetometer numpy arrays: iWatch #####################e
+    # accel
+    iwatch_accel = gen_sensor_array(accel_time_col, accel_z_col, iwatch_csv_array)    
+
+    # gyro
+    iwatch_gyro = gen_sensor_array(accel_time_col, accel_z_col, iwatch_csv_array)  
+
+    # magnetometer
+    iwatch_mag = gen_sensor_array(accel_time_col, accel_z_col, iwatch_csv_array)   
+
+    # finish
+    return iphone_accel, iphone_gyro, iphone_mag, iwatch_accel, iwatch_gyro, iwatch_mag
 
 def main():
     # make three matrices of gyro, accel, magnetometer data
+    iphone_accel, iphone_gyro, iphone_mag, iwatch_accel, iwatch_gyro, iwatch_mag = make_matrices()
 
 if __name__ == "__main__":
     main()
