@@ -59,7 +59,7 @@ def get_data_directory():
     """
     
     # change directory
-    os.chdir('../../data/') # TODO: no file or directory
+    os.chdir('../../data/initial/') # TODO: no file or directory
     # get working directory
     data_directory = os.getcwd()
     os.chdir('../dev/first_kf/')
