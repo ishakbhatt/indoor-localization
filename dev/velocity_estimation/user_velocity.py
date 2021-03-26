@@ -4,16 +4,18 @@
 ##                                       ##
 ###########################################
 
-# imports
+# libraries & functions
 import os
 import numpy as np
 from numpy import genfromtxt
 from scipy.signal import welch
+import matplotlib
+matplotlib.use("agg")
 import matplotlib.pyplot as plt
 
 ###########################################
 ##                                       ##
-##  USER VELOCITY ESTIMATION ALGORITHM   ##
+##           FILTER SELECTION            ##
 ##                                       ##
 ###########################################
 
@@ -28,22 +30,24 @@ def get_results_directory():
     return results_directory
 
 # calculate power spectral densities
-
 def power_spectral_density(sensor_array, sensor):
     """
     Plot the PSD of the sensor data to estimate filter with cutoff freq.
     """
     # Calculate PSD using Welch's PSD Algorithm
     sensor_overlap = (sensor_array.size/2)
-    freq, p_density = welch(sensor_array, window='hann', noverlap=sensor_overlap) 
-    print("Calculated PSD for " + sensor ".")
+    f_sample = 30 # 30 Hz sampling freq TODO: change to 100 Hz for final experiment
+    freq, p_density = welch(sensor_array, f_sample, window='hann')#, noverlap=sensor_overlap) 
+    print("Calculated PSD for " + sensor + ".")
 
     # Plot the PSD and save to results
-    plt.semilogy(freq, p_density)
+    plt.semilogy(freq, p_density[1])
     plt.ylim([0.5e-3, 1])
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Power Spectral Density [V**2/Hz]')
-    plt.savefig(get_results_directory())
+    plt.title("PSD Estimation for " + sensor)
+    plt.show()
+    plt.savefig(get_results_directory() + "/" + sensor + "_PSD.png")
     print("Saved PSD to results.")
 
 #######################################
@@ -56,12 +60,12 @@ def get_data_directory():
     """
     Return repository data directory.
     """
-    
     # change directory
     os.chdir('../../data/initial/')
     # get working directory
     data_directory = os.getcwd()
-    os.chdir('../dev/user_velocity/')
+    print(data_directory)
+    os.chdir('../../dev/velocity_estimation/')
     return data_directory
 
 def gen_sensor_array(time_col, z_col, device_csv_array):
@@ -103,6 +107,12 @@ def make_matrices():
 
 # test
 def main():
+    iphone_accel, iphone_gyro, iwatch_accel, iwatch_gyro = make_matrices()
+    power_spectral_density(iphone_accel, "iPhoneAccelerometer")
+    power_spectral_density(iphone_gyro, "iPhoneGyroscope")
+    power_spectral_density(iwatch_accel, "iWatchAccelerometer")
+    power_spectral_density(iwatch_gyro, "iWatchGyroscope")
+    print("Finished.")
 
 
 if __name__ == "__main__": 
