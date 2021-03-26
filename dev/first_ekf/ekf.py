@@ -62,9 +62,9 @@ def first_ekf(mu, Sigma, Tc, E, w, F, G, Q_w, H, Q_o, o_r, o_w):
     return mu_new, Sigma_new
     
 #######################################
-##
-##    PARSE DATA INTO NUMPY ARRAYS
-##
+##                                   ##
+##    PARSE DATA INTO NUMPY ARRAYS   ##
+##                                   ##
 #######################################
 
 def get_data_directory():
@@ -73,7 +73,7 @@ def get_data_directory():
     """
     
     # change directory
-    os.chdir('../../data/initial/') # TODO: no file or directory
+    os.chdir('../../data/initial/')
     # get working directory
     data_directory = os.getcwd()
     os.chdir('../dev/first_kf/')
