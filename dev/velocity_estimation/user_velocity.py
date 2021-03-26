@@ -9,7 +9,7 @@ import os
 import numpy as np
 from numpy import genfromtxt
 from scipy.signal import welch
-
+import matplotlib.pyplot as plt
 
 ###########################################
 ##                                       ##
@@ -17,11 +17,34 @@ from scipy.signal import welch
 ##                                       ##
 ###########################################
 
+# get results directory
+def get_results_directory():
+    '''
+    Return velocity estimate results directory.
+    '''
+    os.chdir('results')
+    results_directory = os.getcwd()
+    os.chdir('..')
+    return results_directory
+
 # calculate power spectral densities
 
-def power_spectral_density(sensor_array):
-    freq, 
+def power_spectral_density(sensor_array, sensor):
+    """
+    Plot the PSD of the sensor data to estimate filter with cutoff freq.
+    """
+    # Calculate PSD using Welch's PSD Algorithm
+    sensor_overlap = (sensor_array.size/2)
+    freq, p_density = welch(sensor_array, window='hann', noverlap=sensor_overlap) 
+    print("Calculated PSD for " + sensor ".")
 
+    # Plot the PSD and save to results
+    plt.semilogy(freq, p_density)
+    plt.ylim([0.5e-3, 1])
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('Power Spectral Density [V**2/Hz]')
+    plt.savefig(get_results_directory())
+    print("Saved PSD to results.")
 
 #######################################
 ##                                   ##
@@ -31,7 +54,7 @@ def power_spectral_density(sensor_array):
 
 def get_data_directory():
     """
-    Get repository data directory.
+    Return repository data directory.
     """
     
     # change directory
@@ -68,7 +91,7 @@ def make_matrices():
     gyro_z_col = 25
     iphone_gyro = gen_sensor_array(accel_time_col, accel_z_col, iphone_csv_array)  
 
-    ##################### create accel, gyro, magnetometer numpy arrays: iWatch #####################e
+    ##################### create accel, gyro, magnetometer numpy arrays: iWatch #####################
     # accel
     iwatch_accel = gen_sensor_array(accel_time_col, accel_z_col, iwatch_csv_array)    
 
