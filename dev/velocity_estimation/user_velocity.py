@@ -12,6 +12,7 @@ from scipy.signal import welch
 import matplotlib
 matplotlib.use("agg")
 import matplotlib.pyplot as plt
+from matplotlib.pyplot import imshow
 
 ###########################################
 ##                                       ##
@@ -93,14 +94,17 @@ def make_matrices():
     # gyro
     gyro_time_col = 22
     gyro_z_col = 25
-    iphone_gyro = gen_sensor_array(accel_time_col, accel_z_col, iphone_csv_array)  
+    iphone_gyro = gen_sensor_array(gyro_time_col, gyro_z_col, iphone_csv_array)  
 
     ##################### create accel, gyro, magnetometer numpy arrays: iWatch #####################
     # accel
     iwatch_accel = gen_sensor_array(accel_time_col, accel_z_col, iwatch_csv_array)    
+    #plt.matshow(iphone_gyro)
+    #plt.show()
+    #plt.savefig(get_results_directory()+ "/"+ "iwatch_accel.png")
 
     # gyro
-    iwatch_gyro = gen_sensor_array(accel_time_col, accel_z_col, iwatch_csv_array)  
+    iwatch_gyro = gen_sensor_array(gyro_time_col, gyro_z_col, iwatch_csv_array)  
 
     # finish
     return iphone_accel, iphone_gyro, iwatch_accel, iwatch_gyro
@@ -114,14 +118,5 @@ def main():
     power_spectral_density(iwatch_gyro, "iWatchGyroscope")
     print("Finished.")
 
-
 if __name__ == "__main__": 
     main()
-
-
-
-
-
-
-
-
