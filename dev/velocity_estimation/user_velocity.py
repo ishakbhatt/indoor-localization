@@ -37,9 +37,9 @@ def power_spectral_density(sensor_array, sensor):
     Plot the PSD of the sensor data to estimate filter with cutoff freq.
     """
     # Calculate PSD using Welch's PSD Algorithm
-    sensor_overlap = (sensor_array.size/2)
+    sensor_overlap = (sensor_array.shape[1]/2)
     f_sample = 30 # 30 Hz sampling freq TODO: change to 100 Hz for final experiment
-    freq, p_density = welch(sensor_array, f_sample, window='hann')#, noverlap=sensor_overlap) 
+    freq, p_density = welch(sensor_array[0:802, 1:4], f_sample, window='hann', noverlap=sensor_overlap)
     print("Calculated PSD for " + sensor + ".")
 
     # Plot the PSD and save to results
@@ -83,25 +83,31 @@ def make_matrices():
     """
     data_dir = get_data_directory()
 
+    print("Generating iPhone Array...")
     iphone_csv_array = genfromtxt(os.path.join(data_dir, 'iphoneIMU.csv'), delimiter=",", skip_header=1)
+    print("Generating iWatch Array...")
     iwatch_csv_array = genfromtxt(os.path.join(data_dir, 'iWatchIMU.csv'), delimiter=",", skip_header=1)
 
     ##################### create accel, gyro, magnetometer numpy arrays: iPhone #####################
     # accel
     accel_time_col = 18
     accel_z_col = 22
+    print("Generating iPhone Accel Array...")
     iphone_accel = gen_sensor_array(accel_time_col, accel_z_col, iphone_csv_array)    
 
     # gyro
     gyro_time_col = 22
     gyro_z_col = 26
+    print("Generating iPhone Gyro Array...")
     iphone_gyro = gen_sensor_array(gyro_time_col, gyro_z_col, iphone_csv_array)  
 
     ##################### create accel, gyro, magnetometer numpy arrays: iWatch #####################
     # accel
+    print("Generating iWatch Accel Array...")
     iwatch_accel = gen_sensor_array(accel_time_col, accel_z_col, iwatch_csv_array)
 
     # gyro
+    print("Generating iWatch Gyro Array...")
     iwatch_gyro = gen_sensor_array(gyro_time_col, gyro_z_col, iwatch_csv_array)  
 
     # finish
