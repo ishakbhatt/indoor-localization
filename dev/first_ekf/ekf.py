@@ -86,51 +86,37 @@ def gen_sensor_array(time_col, z_col, device_csv_array):
     Create NumPy array given start and end rows and columns.
     """
     num_rows = len(device_csv_array)
-    return device_csv_array[0: num_rows-1][time_col: z_col]  
+    return device_csv_array[0: num_rows-1, time_col: z_col]
 
 def make_matrices():
     """
     Format IMU CSV data into Numpy matrices.
     """
     data_dir = get_data_directory()
-    '''
-    # open csv file
-    with open(os.path.join(data_dir, 'iphoneIMU.csv'), 'r') as csv_file
-        csv_reader = csv.reader(csv_file, delimiter=',')
-        for row in csv_reader:
-            for col in row:
-                if '''
+
     iphone_csv_array = genfromtxt(os.path.join(data_dir, 'iphoneIMU.csv'), delimiter=",", skip_header=1)
     iwatch_csv_array = genfromtxt(os.path.join(data_dir, 'iWatchIMU.csv'), delimiter=",", skip_header=1)
 
     ##################### create accel, gyro, magnetometer numpy arrays: iPhone #####################
     # accel
     accel_time_col = 18
-    accel_z_col = 21
-    iphone_accel = gen_sensor_array(accel_time_col, accel_z_col, iphone_csv_array)    
+    accel_z_col = 22
+    iphone_accel = gen_sensor_array(accel_time_col, accel_z_col, iphone_csv_array)
 
     # gyro
     gyro_time_col = 22
-    gyro_z_col = 25
-    iphone_gyro = gen_sensor_array(gyro_time_col, gyro_z_col, iphone_csv_array)  
+    gyro_z_col = 26
+    iphone_gyro = gen_sensor_array(gyro_time_col, gyro_z_col, iphone_csv_array)
 
-    # magnetometer
-    mag_time_col = 26
-    mag_z_col = 29
-    iphone_mag = gen_sensor_array(mag_time_col, mag_z_col, iphone_csv_array)  
-
-    ##################### create accel, gyro, magnetometer numpy arrays: iWatch #####################e
+    ##################### create accel, gyro, magnetometer numpy arrays: iWatch #####################
     # accel
-    iwatch_accel = gen_sensor_array(accel_time_col, accel_z_col, iwatch_csv_array)    
+    iwatch_accel = gen_sensor_array(accel_time_col, accel_z_col, iwatch_csv_array)
 
     # gyro
-    iwatch_gyro = gen_sensor_array(gyro_time_col, gyro_z_col, iwatch_csv_array)  
-
-    # magnetometer
-    iwatch_mag = gen_sensor_array(mag_time_col, mag_z_col, iwatch_csv_array)   
+    iwatch_gyro = gen_sensor_array(gyro_time_col, gyro_z_col, iwatch_csv_array)
 
     # finish
-    return iphone_accel, iphone_gyro, iphone_mag, iwatch_accel, iwatch_gyro, iwatch_mag
+    return iphone_accel, iphone_gyro, iwatch_accel, iwatch_gyro
 
 def main():
     # make three matrices of gyro, accel, magnetometer data

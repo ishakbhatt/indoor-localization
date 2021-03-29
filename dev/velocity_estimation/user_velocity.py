@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 ###########################################
 ##                                       ##
 ##  USER VELOCITY ESTIMATION ALGORITHM   ##
@@ -74,7 +75,7 @@ def gen_sensor_array(time_col, z_col, device_csv_array):
     Create NumPy array given start and end rows and columns.
     """
     num_rows = len(device_csv_array)
-    return device_csv_array[0: num_rows-1][time_col: z_col]  
+    return device_csv_array[0: num_rows-1, time_col: z_col]
 
 def make_matrices():
     """
@@ -88,20 +89,17 @@ def make_matrices():
     ##################### create accel, gyro, magnetometer numpy arrays: iPhone #####################
     # accel
     accel_time_col = 18
-    accel_z_col = 21
+    accel_z_col = 22
     iphone_accel = gen_sensor_array(accel_time_col, accel_z_col, iphone_csv_array)    
 
     # gyro
     gyro_time_col = 22
-    gyro_z_col = 25
+    gyro_z_col = 26
     iphone_gyro = gen_sensor_array(gyro_time_col, gyro_z_col, iphone_csv_array)  
 
     ##################### create accel, gyro, magnetometer numpy arrays: iWatch #####################
     # accel
-    iwatch_accel = gen_sensor_array(accel_time_col, accel_z_col, iwatch_csv_array)    
-    #plt.matshow(iphone_gyro)
-    #plt.show()
-    #plt.savefig(get_results_directory()+ "/"+ "iwatch_accel.png")
+    iwatch_accel = gen_sensor_array(accel_time_col, accel_z_col, iwatch_csv_array)
 
     # gyro
     iwatch_gyro = gen_sensor_array(gyro_time_col, gyro_z_col, iwatch_csv_array)  
