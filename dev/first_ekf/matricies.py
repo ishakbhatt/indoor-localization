@@ -7,8 +7,13 @@ Tc = 1 # Sampling period (change)
 g_w = np.matrix([0,0,9.8]).T
 n_w = np.matrix([1,0,0]).T
 
-############ JACOBIAN MATRICIES #############
 def jacob_E_wr(t, w):
+    """
+
+    Returns a 3 x 3 numpy matrix representing the Jacobian of
+    E(theta)*w_r evaluated at theta and w_r
+
+    """
     E_times_wr = sp.Matrix([sps.x + sp.sin(sps.r)*sp.tan(sps.p)*sps.y + sp.cos(sps.r)*sp.tan(sps.p)*sps.z,
                             sp.cos(sps.r)*sps.y + -1*sp.sin(sps.r)*sps.z,
                             (sp.sin(sps.r)*sps.y)/sp.cos(sps.p) + (sp.cos(sps.r)*sps.z)/sp.cos(sps.p)])
