@@ -39,11 +39,11 @@ def power_spectral_density(sensor_array, sensor):
     # Calculate PSD using Welch's PSD Algorithm
     sensor_overlap = (sensor_array.shape[1]/2)
     f_sample = 30 # 30 Hz sampling freq TODO: change to 100 Hz for final experiment
-    freq, p_density = welch(sensor_array[0:802, 1:4], f_sample, window='hann', noverlap=sensor_overlap)
+    freq, p_density = welch(sensor_array[0:803, 1], f_sample, window='hann', noverlap=sensor_overlap)
     print("Calculated PSD for " + sensor + ".")
 
     # Plot the PSD and save to results
-    plt.semilogy(freq, p_density[1])
+    plt.semilogy(freq, p_density)
     plt.ylim([0.5e-3, 1])
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Power Spectral Density [V**2/Hz]')
