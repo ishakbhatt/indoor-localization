@@ -47,9 +47,10 @@ def power_spectral_density(sensor_array, sensor):
             print("Calculated PSD for " + sensor + " " + xyz[i] + " axis" + ".")
 
             # Plot the PSD and save to results
-            plt.semilogy(freq, p_density)
+            plt.semilogy(freq, p_density, label=xyz[i])
             plt.ylim([0.5e-3, 1])
             plt.xlabel('Frequency (Hz)')
+            plt.legend(loc="upper right")
             plt.ylabel('Power Spectral Density [dB]')
             plt.title("PSD Estimation for " + sensor)
             plt.savefig(get_results_directory() + "/" + sensor + "_PSD.png")
