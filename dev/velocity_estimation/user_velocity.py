@@ -36,21 +36,24 @@ def power_spectral_density(sensor_array, sensor):
     """
     Plot the PSD of the sensor data to estimate filter with cutoff freq.
     """
+    xyz = ["Time", "X", "Y", "Z"]
+    plt.figure()
     # Calculate PSD using Welch's PSD Algorithm
-    sensor_overlap = (sensor_array.shape[1]/2)
-    f_sample = 30 # 30 Hz sampling freq TODO: change to 100 Hz for final experiment
-    freq, p_density = welch(sensor_array[0:803, 1], f_sample, window='hann', noverlap=sensor_overlap)
-    print("Calculated PSD for " + sensor + ".")
+    for i in range(len(xyz)):
+        if (i!=0):
+            sensor_overlap = (sensor_array.shape[1]/2)
+            f_sample = 30 # 30 Hz sampling freq TODO: change to 100 Hz for final experiment
+            freq, p_density = welch(sensor_array[0:sensor_array.shape[0], i], f_sample, window='hann', noverlap=sensor_overlap)
+            print("Calculated PSD for " + sensor + " " + xyz[i] + " axis" + ".")
 
-    # Plot the PSD and save to results
-    plt.semilogy(freq, p_density)
-    plt.ylim([0.5e-3, 1])
-    plt.xlabel('Frequency (Hz)')
-    plt.ylabel('Power Spectral Density [V**2/Hz]')
-    plt.title("PSD Estimation for " + sensor)
-    plt.show()
-    plt.savefig(get_results_directory() + "/" + sensor + "_PSD.png")
-    print("Saved PSD to results.")
+            # Plot the PSD and save to results
+            plt.semilogy(freq, p_density)
+            plt.ylim([0.5e-3, 1])
+            plt.xlabel('Frequency (Hz)')
+            plt.ylabel('Power Spectral Density [V**2/Hz]')
+            plt.title("PSD Estimation for " + sensor)
+            plt.savefig(get_results_directory() + "/" + sensor + "_PSD.png")
+            print("Saved PSD to results.")
 
 #######################################
 ##                                   ##
