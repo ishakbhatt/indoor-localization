@@ -85,7 +85,7 @@ def G(theta, w):
     representing the current angular velocities
 
     """
-    return Tc*E(theta) # TOOD: confirm equation
+    return Tc*E(theta)
 
 def Q_w(w):
     """
