@@ -7,22 +7,6 @@ Tc = 1 # Sampling period (change)
 g_w = np.matrix([0,0,9.8]).T
 n_w = np.matrix([1,0,0]).T
 
-def jacob_E_wr(t, w):
-    """
-
-    Returns a 3 x 3 numpy matrix representing the Jacobian of
-    E(theta)*w_r evaluated at theta and w_r
-
-    """
-    E_times_wr = sp.Matrix([sps.x + sp.sin(sps.r)*sp.tan(sps.p)*sps.y + sp.cos(sps.r)*sp.tan(sps.p)*sps.z,
-                            sp.cos(sps.r)*sps.y + -1*sp.sin(sps.r)*sps.z,
-                            (sp.sin(sps.r)*sps.y)/sp.cos(sps.p) + (sp.cos(sps.r)*sps.z)/sp.cos(sps.p)])
-    theta = sp.Matrix([sps.r, sps.p, sps.phi])
-    J = E_times_wr.jacobian(theta) # unevaluated Jacobian
-    print(J) # for testing
-    J_eval = E_times_wr.jacobian(theta).subs([(sps.r,t[0]), (sps.p,t[1]), (sps.phi,t[2]), (sps.x,w[0]), (sps.y,w[1]), (sps.z,w[2])])
-    return np.matrix(J_eval)
-
 def R(theta):
     """
 
@@ -67,25 +51,29 @@ def E(theta):
 
     return E
 
-def E_times_wr(theta, wr):
-    r = theta[0] # roll
-    p = theta[1] # pitch
-    y = theta[2] # yaw
-    return -1*np.matrix([[1, sin(r)*tan(p), cos(r)*tan(p)],
-                      [0, cos(r), -sin(r)],
-                      [0, sin(r)/cos(p), cos(r)/cos(p)]])*wr
-
 def F(theta, w):
     """
 
     Returns a 3 x 3 numpy matrix representing the Jacobian of the system
-    matrix given the theta vector, a 3 x 1 numpy matrix representing
-    the current roll, pitch, and yaw angles and w, a 3 x 1 numpy matrix
-    representing the current angular velocities
+    matrix w.r.t. the the theta vector given the t vector, a 3 x 1 numpy
+    matrix representing the current roll, pitch, and yaw angles and w, a
+    3 x 1 numpy matrix representing the current angular velocities
 
     """
-
-    F = np.identity(3) + Tc*pd('E*w_r', 'theta', theta, w) # TODO: partial deriv situation
+    E_times_wr = sp.Matrix([sps.x + sp.sin(sps.r)*sp.tan(sps.p)*sps.y + sp.cos(sps.r)*sp.tan(sps.p)*sps.z,
+                            sp.cos(sps.r)*sps.y + -1*sp.sin(sps.r)*sps.z,
+                            (sp.sin(sps.r)*sps.y)/sp.cos(sps.p) + (sp.cos(sps.r)*sps.z)/sp.cos(sps.p)])
+    theta_vec = sp.Matrix([sps.r, sps.p, sps.a])
+    J = E_times_wr.jacobian(theta_vec) # unevaluated Jacobian
+    print(J) # for testing
+    J_eval = E_times_wr.jacobian(theta_vec).subs([(sps.r,theta[0]),
+                                                  (sps.p,theta[1]),
+                                                  (sps.a,theta[2]),
+                                                  (sps.x,w[0]),
+                                                  (sps.y,w[1]),
+                                                  (sps.z,w[2])])
+    J_eval = np.matrix(J_eval) # convert Jacobian to numpy matrix
+    F = np.identity(3) + Tc*J_eval
     return F
 
 def G(theta, w):
