@@ -10,6 +10,8 @@ import os
 import numpy as np
 from numpy import genfromtxt
 from scipy.signal import welch
+from scipy.signal import butter
+from scipy.signal import lfilter
 import matplotlib
 matplotlib.use("agg")
 import matplotlib.pyplot as plt
@@ -20,6 +22,43 @@ from matplotlib.pyplot import imshow
 ##           FILTER SELECTION            ##
 ##                                       ##
 ###########################################
+
+def low_pass_filter(sensor_array, sensor, cutoff_freq):
+    '''
+    Apply low pass filter on sensor data based on PSD.
+    '''
+    samp_duration = 0
+    xyz = ["Time", "X", "Y", "Z"]
+    filtered_signals = []
+
+    for i in range(len(xyz)):
+        if i == 0:
+            samp_duration = sensor_array[sensor_array.shape[0]-1, 0]
+            print("Calculating sample duration...")
+        else:
+            plt.figure()
+            order = 5
+            fs = 30 # TODO: change to 100 Hz
+            num_samples = sensor_array.shape[0]
+            time = np.linspace(0, samp_duration, num_samples, endpoint=False)
+            normalized_cutoff_freq = 2 * cutoff_freq/fs
+            numerator_coeffs, denominator_coeffs = butter(order, normalized_cutoff_freq)
+            filtered_signal = lfilter(numerator_coeffs, denominator_coeffs, sensor_array[0:sensor_array.shape[0], i])
+            print("Filtered signal for " + sensor + " " + xyz[i] + " axis" + ".")
+            plt.plot(time, sensor_array[0:sensor_array.shape[0], i], 'b-', label=sensor)
+            plt.plot(time, filtered_signal, 'g-', linewidth=2, label='filtered signal')
+            plt.xlabel('Time (s)')
+            plt.legend(loc="upper right")
+            plt.title("Signal vs LP Filtered signal: " + sensor + " " + xyz[i])
+            plt.savefig(get_results_directory() + "/" + sensor + "_" + xyz[i] + "_filtered.png")
+            filtered_signals.append(filtered_signal) # XYZ
+
+    x_filtered = filtered_signals[0]
+    y_filtered = filtered_signals[1]
+    z_filtered = filtered_signals[2]
+
+    return x_filtered, y_filtered, z_filtered
+
 
 # get results directory
 def get_results_directory():
@@ -119,11 +158,19 @@ def make_matrices():
 
 # test
 def main():
+    # Turn CSV into numpy matrices
     iphone_accel, iphone_gyro, iwatch_accel, iwatch_gyro = make_matrices()
+
+    # Plot PSD using Welch's method for cutoff freqs
     power_spectral_density(iphone_accel, "iPhoneAccelerometer")
     power_spectral_density(iphone_gyro, "iPhoneGyroscope")
     power_spectral_density(iwatch_accel, "iWatchAccelerometer")
     power_spectral_density(iwatch_gyro, "iWatchGyroscope")
+
+    iphone_accel_x_filtered, iphone_accel_y_filtered, iphone_accel_z_filtered = low_pass_filter(iphone_accel, "iPhoneAccelerometer", 10)
+    iphone_gyro_x_filtered, iphone_gyro_y_filtered, iphone_gyro_z_filtered = low_pass_filter(iphone_gyro, "iPhoneGyroscope", 13)
+    iwatch_accel_x_filtered, iwatch_accel_y_filtered, iwatch_accel_z_filtered = low_pass_filter(iwatch_accel, "iWatchAccelerometer", 10)
+    iwatch_gyro_x_filtered, iwatch_gyro_y_filtered, iwatch_gyro_z_filtered = low_pass_filter(iwatch_gyro, "iWatchGyroscope", 6)
     print("Finished.")
 
 if __name__ == "__main__": 
