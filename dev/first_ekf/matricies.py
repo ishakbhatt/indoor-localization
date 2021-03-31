@@ -21,7 +21,7 @@ def R(theta):
     rx = np.matrix([[1, 0, 0], [0, cos(x), -sin(x)], [0, sin(x), cos(x)]])
     ry = np.matrix([[cos(y), 0, sin(y)], [0, 1, 0], [-sin(y), 0, cos(y)]])
     rz = np.matrix([[cos(z), -sin(z), 0], [sin(z), cos(z), 0], [0, 0, 1]])
-    return rx*ry*rz # TODO: test
+    return rz*ry*rx # TODO: test
 
 def U(theta):
     """
