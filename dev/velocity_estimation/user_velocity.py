@@ -33,7 +33,7 @@ def low_pass_filter(sensor_array, sensor, cutoff_freq):
 
     for i in range(len(xyz)):
         if i == 0:
-            samp_duration = sensor_array[sensor_array.shape[0]-1, 0]
+            samp_duration = sensor_array[sensor_array.shape[0]-1, 0]-sensor_array[0, 0]
             print("Calculating sample duration...")
         else:
             plt.figure()
@@ -133,25 +133,29 @@ def make_matrices():
 
     ##################### create accel, gyro, magnetometer numpy arrays: iPhone #####################
     # accel
-    accel_time_col = 18
-    accel_z_col = 22
+    iphone_accel_time_col = 18
+    iphone_accel_z_col = 22
     print("Generating iPhone Accel Array...")
-    iphone_accel = gen_sensor_array(accel_time_col, accel_z_col, iphone_csv_array)    
+    iphone_accel = gen_sensor_array(iphone_accel_time_col, iphone_accel_z_col, iphone_csv_array)
 
     # gyro
-    gyro_time_col = 22
-    gyro_z_col = 26
+    iphone_gyro_time_col = 22
+    iphone_gyro_z_col = 26
     print("Generating iPhone Gyro Array...")
-    iphone_gyro = gen_sensor_array(gyro_time_col, gyro_z_col, iphone_csv_array)  
+    iphone_gyro = gen_sensor_array(iphone_gyro_time_col, iphone_gyro_z_col, iphone_csv_array)
 
     ##################### create accel, gyro, magnetometer numpy arrays: iWatch #####################
     # accel
+    iwatch_accel_time_col = 10
+    iwatch_accel_z_col = 14
     print("Generating iWatch Accel Array...")
-    iwatch_accel = gen_sensor_array(accel_time_col, accel_z_col, iwatch_csv_array)
+    iwatch_accel = gen_sensor_array(iwatch_accel_time_col, iwatch_accel_z_col, iwatch_csv_array)
 
     # gyro
+    iwatch_gyro_time_col = 14
+    iwatch_gyro_z_col = 18
     print("Generating iWatch Gyro Array...")
-    iwatch_gyro = gen_sensor_array(gyro_time_col, gyro_z_col, iwatch_csv_array)  
+    iwatch_gyro = gen_sensor_array(iwatch_gyro_time_col, iwatch_gyro_z_col, iwatch_csv_array)
 
     # finish
     return iphone_accel, iphone_gyro, iwatch_accel, iwatch_gyro
@@ -167,10 +171,11 @@ def main():
     power_spectral_density(iwatch_accel, "iWatchAccelerometer")
     power_spectral_density(iwatch_gyro, "iWatchGyroscope")
 
-    iphone_accel_x_filtered, iphone_accel_y_filtered, iphone_accel_z_filtered = low_pass_filter(iphone_accel, "iPhoneAccelerometer", 10)
-    iphone_gyro_x_filtered, iphone_gyro_y_filtered, iphone_gyro_z_filtered = low_pass_filter(iphone_gyro, "iPhoneGyroscope", 13)
-    iwatch_accel_x_filtered, iwatch_accel_y_filtered, iwatch_accel_z_filtered = low_pass_filter(iwatch_accel, "iWatchAccelerometer", 10)
-    iwatch_gyro_x_filtered, iwatch_gyro_y_filtered, iwatch_gyro_z_filtered = low_pass_filter(iwatch_gyro, "iWatchGyroscope", 6)
+    # Low Pass filter accel and gyro data
+    iphone_accel_x_filtered, iphone_accel_y_filtered, iphone_accel_z_filtered = low_pass_filter(iphone_accel, "iPhoneAccelerometer", 8)
+    iphone_gyro_x_filtered, iphone_gyro_y_filtered, iphone_gyro_z_filtered = low_pass_filter(iphone_gyro, "iPhoneGyroscope", 10)
+    iwatch_accel_x_filtered, iwatch_accel_y_filtered, iwatch_accel_z_filtered = low_pass_filter(iwatch_accel, "iWatchAccelerometer", 6)
+    iwatch_gyro_x_filtered, iwatch_gyro_y_filtered, iwatch_gyro_z_filtered = low_pass_filter(iwatch_gyro, "iWatchGyroscope", 14)
     print("Finished.")
 
 if __name__ == "__main__": 
