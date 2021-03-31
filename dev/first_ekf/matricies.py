@@ -4,13 +4,13 @@ import sympy.abc as sps
 from math import sin, cos, tan
 
 Tc = 1 # Sampling period (change)
-g_w = np.matrix([0,0,9.8]).T
-n_w = np.matrix([1,0,0]).T
+g_w = np.array([0,0,9.8]).T
+n_w = np.array([1,0,0]).T
 
 def R(theta):
     """
 
-    Returns a 3 x 3 numpy matrix representating the total
+    Returns a 3 x 3 numpy array representating the total
     rotation matrix given theta, a 3 x 1 numpy matrix representing
     the current roll, pitch, and yaw angles
 
@@ -18,18 +18,18 @@ def R(theta):
     x = theta[0]
     y = theta[1]
     z = theta[2]
-    rx = np.matrix([[1, 0, 0], [0, cos(x), -sin(x)], [0, sin(x), cos(x)]])
-    ry = np.matrix([[cos(y), 0, sin(y)], [0, 1, 0], [-sin(y), 0, cos(y)]])
-    rz = np.matrix([[cos(z), -sin(z), 0], [sin(z), cos(z), 0], [0, 0, 1]])
+    rx = np.array([[1, 0, 0], [0, cos(x), -sin(x)], [0, sin(x), cos(x)]])
+    ry = np.array([[cos(y), 0, sin(y)], [0, 1, 0], [-sin(y), 0, cos(y)]])
+    rz = np.array([[cos(z), -sin(z), 0], [sin(z), cos(z), 0], [0, 0, 1]])
     return rz*ry*rx # TODO: test
 
 def U(theta):
     """
 
-    Returns a 7 x 7 numpy matrix representing the output matrix 
+    Returns a 7 x 7 numpy array representing the output matrix 
 
     """
-    U = np.matrix([R(theta).T, np.zeros(3,3), np.zeros(3,1)], 
+    U = np.array([R(theta).T, np.zeros(3,3), np.zeros(3,1)], 
                   [np.zeros(3,3), R(theta).T, np.zeros(3,1)],
                   [np.zeros(1,3), np.zeros(1,3), 1])
     return U
@@ -37,15 +37,15 @@ def U(theta):
 def E(theta):
     """
 
-    Returns a 3 x 3 numpy matrix representing the system matrix
-    at the gvien theta vector, a 3 x 1 numpy matrix representing
+    Returns a 3 x 3 numpy array representing the system matrix
+    at the gvien theta vector, a 3 x 1 numpy array representing
     the current roll, pitch, and yaw angles. 
 
     """
     r = theta[0] # roll
     p = theta[1] # pitch
     y = theta[2] # yaw
-    E = -1*np.matrix([[1, sin(r)*tan(p), cos(r)*tan(p)],
+    E = -1*np.array([[1, sin(r)*tan(p), cos(r)*tan(p)],
                       [0, cos(r), -sin(r)],
                       [0, sin(r)/cos(p), cos(r)/cos(p)]])
 
@@ -54,10 +54,10 @@ def E(theta):
 def F(theta, w):
     """
 
-    Returns a 3 x 3 numpy matrix representing the Jacobian of the system
+    Returns a 3 x 3 numpy array representing the Jacobian of the system
     matrix w.r.t. the the theta vector given the t vector, a 3 x 1 numpy
-    matrix representing the current roll, pitch, and yaw angles and w, a
-    3 x 1 numpy matrix representing the current angular velocities
+    array representing the current roll, pitch, and yaw angles and w, a
+    3 x 1 numpy array representing the current angular velocities
 
     """
     E_times_wr = sp.Matrix([sps.x + sp.sin(sps.r)*sp.tan(sps.p)*sps.y + sp.cos(sps.r)*sp.tan(sps.p)*sps.z,
@@ -72,16 +72,16 @@ def F(theta, w):
                                                   (sps.x,w[0]),
                                                   (sps.y,w[1]),
                                                   (sps.z,w[2])])
-    J_eval = np.matrix(J_eval) # convert Jacobian to numpy matrix
+    J_eval = np.array(J_eval) # convert Jacobian to numpy matrix
     F = np.identity(3) + Tc*J_eval
     return F
 
 def G(theta, w):
     """
 
-    Returns a 3 x 3 numpy matrix representing the Jacobian of the system
-    matrix given given the theta vector, a a 3 x 1 numpy matrix representing
-    the current roll, pitch, and yaw angles and w, a 3 x 1 numpy matrix
+    Returns a 3 x 3 numpy array representing the Jacobian of the system
+    matrix given given the theta vector, a a 3 x 1 numpy array representing
+    the current roll, pitch, and yaw angles and w, a 3 x 1 numpy array
     representing the current angular velocities
 
     """
@@ -90,7 +90,7 @@ def G(theta, w):
 def Q_w(w):
     """
 
-    Returns a 3 x 3 numpy matrix covariance matrix associated with w including
+    Returns a 3 x 3 numpy array covariance matrix associated with w including
     both intrinsic and measurement uncertainty contributions
 
     """
@@ -100,7 +100,7 @@ def Q_w(w):
 def H(theta):
     """
 
-    Returns a 3 x 3 numpy matrix representing the Jacobian of the
+    Returns a 3 x 3 numpy array representing the Jacobian of the
     output matrix U * o_w
 
     """
@@ -110,7 +110,7 @@ def H(theta):
 def o_w(yaw):
     """
 
-    Returns a 6 x 1 numpy matrix containing the gravitational acceleration
+    Returns a 7 x 1 numpy array containing the gravitational acceleration
     vector, the north directed unit vector and the current yaw
 
     """
@@ -120,7 +120,7 @@ def o_w(yaw):
 def Q_o():
     """
 
-    Returns a the covariance matrix of the current measurement vector o_r
+    Returns the covariance array of the current measurement vector o_r
 
     """
     return 0 # TODO
@@ -128,7 +128,7 @@ def Q_o():
 def o_r(g_r, n_r, yaw_r):
     """
 
-    Returns a 6 x 1 numpy matrix containing the current measurement vector
+    Returns a 7 x 1 numpy array containing the current measurement vector
 
     """
     o = np.matrix([g_r.T, n_r.T, yaw_r]).T
@@ -136,7 +136,7 @@ def o_r(g_r, n_r, yaw_r):
 
 def main():
     # TEST CASES
-    # w = np.matrix([1,1,1]).T
+    # w = np.array([1,1,1]).T
     # f = F([0, 0, 0], w)
     print(o_w(5))
 
