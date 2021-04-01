@@ -15,6 +15,21 @@ from scipy.signal import lfilter
 import matplotlib
 matplotlib.use("agg")
 import matplotlib.pyplot as plt
+from tensorflow import keras
+
+###########################################
+##                                       ##
+##         DEEP NEURAL NETWORK           ##
+##                                       ##
+###########################################
+
+def deep_neural_network(horizontal_accel, vertical_accel, horizontal_gyro, vertical_gyro):
+    '''
+    Apply a DCNN to estimate user velocity.
+    '''
+    # https://machinelearningmastery.com/tensorflow-tutorial-deep-learning-with-tf-keras/
+    # um what is a dcnn pls send help
+
 
 ###########################################
 ##                                       ##
@@ -27,13 +42,13 @@ def coordinate_sys_alignment(sensor_x, sensor_y, sensor_z):
     Transform accel & gyro data into orientation.
     '''
     # derive gravity component on each axis
-    vector_x = np.average(sensor_x)/sensor_x.shape[0]
-    vector_y = np.average(sensor_y)/sensor_y.shape[0]
-    vector_z = np.average(sensor_z)/sensor_z.shape[0]
+    vector_x = np.average(sensor_x)
+    vector_y = np.average(sensor_y)
+    vector_z = np.average(sensor_z)
     vec = [vector_x, vector_y, vector_z]
 
     # construct dynamic component of the sensor
-    d = [sensor_x-vector_x, sensor_y-vector_y, sensor_z-vector_z]
+    d = [(sensor_x-vector_x), (sensor_y-vector_y), (sensor_z-vector_z)]
 
     #for i in range(len(vec)):
         # take norm of vector
@@ -212,6 +227,11 @@ def main():
     iphone_gyro_horizonal, iphone_gyro_vertical = coordinate_sys_alignment(iphone_gyro_x_filtered, iphone_gyro_y_filtered, iphone_gyro_z_filtered)
     iwatch_accel_horizonal, iwatch_accel_vertical = coordinate_sys_alignment(iwatch_accel_x_filtered, iwatch_accel_y_filtered, iwatch_accel_z_filtered)
     iwatch_gyro_horizonal, iwatch_gyro_vertical = coordinate_sys_alignment(iwatch_gyro_x_filtered, iwatch_gyro_y_filtered, iwatch_gyro_z_filtered)
+
+    user_velocity_iphone = deep_neural_network(iphone_accel_horizonal, iphone_accel_vertical, iphone_gyro_horizonal, iphone_gyro_vertical)
+    user_velocity_iwatch = deep_neural_network(iwatch_accel_horizonal, iwatch_accel_vertical, iwatch_gyro_horizonal, iwatch_gyro_vertical)
+    final_velocity = (user_velocity_iphone + user_velocity_iwatch) / 2
+    print("User Velocity Estimation: " + final_velocity)
 
     print("Finished.")
 
