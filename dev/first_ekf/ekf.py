@@ -45,7 +45,7 @@ def first_ekf(mu, Sigma, Tc, E, w, F, G, Q_w, H, Q_o, o_r, o_w):
             pitch and yaw
 
     """
-
+'''
     ########## PREDICTION STEP ##########
     # Use dynamics to predict what will happen
 
@@ -61,7 +61,7 @@ def first_ekf(mu, Sigma, Tc, E, w, F, G, Q_w, H, Q_o, o_r, o_w):
     mu_new = mu_bar + K*(o_r - o_r_bar)
     Sigma_new = (np.identity(K.shape[0] - K*H)*Sigma_bar
 
-    return mu_new, Sigma_new
+    return mu_new, Sigma_new'''
     
 #######################################
 ##                                   ##
@@ -78,7 +78,7 @@ def get_data_directory():
     os.chdir('../../data/initial/')
     # get working directory
     data_directory = os.getcwd()
-    os.chdir('../dev/first_kf/')
+    os.chdir('../../dev/first_ekf/')
     return data_directory
 
 def gen_sensor_array(time_col, z_col, device_csv_array):
@@ -94,33 +94,49 @@ def make_matrices():
     """
     data_dir = get_data_directory()
 
+    print("Generating iPhone Array...")
     iphone_csv_array = genfromtxt(os.path.join(data_dir, 'iphoneIMU.csv'), delimiter=",", skip_header=1)
+    print("Generating iWatch Array...")
     iwatch_csv_array = genfromtxt(os.path.join(data_dir, 'iWatchIMU.csv'), delimiter=",", skip_header=1)
 
     ##################### create accel, gyro, magnetometer numpy arrays: iPhone #####################
     # accel
-    accel_time_col = 18
-    accel_z_col = 22
-    iphone_accel = gen_sensor_array(accel_time_col, accel_z_col, iphone_csv_array)
+    iphone_accel_time_col = 18
+    iphone_accel_z_col = 22
+    print("Generating iPhone Accel Array...")
+    iphone_accel = gen_sensor_array(iphone_accel_time_col, iphone_accel_z_col, iphone_csv_array)
 
     # gyro
-    gyro_time_col = 22
-    gyro_z_col = 26
-    iphone_gyro = gen_sensor_array(gyro_time_col, gyro_z_col, iphone_csv_array)
+    iphone_gyro_time_col = 22
+    iphone_gyro_z_col = 26
+    print("Generating iPhone Gyro Array...")
+    iphone_gyro = gen_sensor_array(iphone_gyro_time_col, iphone_gyro_z_col, iphone_csv_array)
 
-    ##################### create accel, gyro, magnetometer numpy arrays: iWatch #####################
+    # mag
+    iphone_mag_time_col = 26
+    iphone_mag_z_col = 30
+    print("Generating iPhone Mag Array...")
+    iphone_mag = gen_sensor_array(iphone_mag_time_col, iphone_mag_z_col, iphone_csv_array)
+
+    ##################### create accel and gyro numpy arrays: iWatch #####################
     # accel
-    iwatch_accel = gen_sensor_array(accel_time_col, accel_z_col, iwatch_csv_array)
+    iwatch_accel_time_col = 10
+    iwatch_accel_z_col = 14
+    print("Generating iWatch Accel Array...")
+    iwatch_accel = gen_sensor_array(iwatch_accel_time_col, iwatch_accel_z_col, iwatch_csv_array)
 
     # gyro
-    iwatch_gyro = gen_sensor_array(gyro_time_col, gyro_z_col, iwatch_csv_array)
+    iwatch_gyro_time_col = 14
+    iwatch_gyro_z_col = 18
+    print("Generating iWatch Gyro Array...")
+    iwatch_gyro = gen_sensor_array(iwatch_gyro_time_col, iwatch_gyro_z_col, iwatch_csv_array)
 
     # finish
-    return iphone_accel, iphone_gyro, iwatch_accel, iwatch_gyro
+    return iphone_accel, iphone_gyro, iphone_mag, iwatch_accel, iwatch_gyro
 
 def main():
     # make three matrices of gyro, accel, magnetometer data
-    iphone_accel, iphone_gyro, iphone_mag, iwatch_accel, iwatch_gyro, iwatch_mag = make_matrices()
+    iphone_accel, iphone_gyro, iphone_mag, iwatch_accel, iwatch_gyro = make_matrices()
 
 if __name__ == "__main__":
     main()

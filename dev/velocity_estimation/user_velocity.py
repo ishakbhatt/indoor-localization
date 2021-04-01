@@ -190,7 +190,7 @@ def make_matrices():
     print("Generating iPhone Gyro Array...")
     iphone_gyro = gen_sensor_array(iphone_gyro_time_col, iphone_gyro_z_col, iphone_csv_array)
 
-    ##################### create accel, gyro, magnetometer numpy arrays: iWatch #####################
+    ##################### create accel, and gyro numpy arrays: iWatch #####################
     # accel
     iwatch_accel_time_col = 10
     iwatch_accel_z_col = 14
