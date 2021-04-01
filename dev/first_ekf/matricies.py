@@ -23,15 +23,31 @@ def R(theta):
     rz = np.array([[cos(z), -sin(z), 0], [sin(z), cos(z), 0], [0, 0, 1]])
     return rz*ry*rx # TODO: test
 
-def U(theta):
+def U_with_yaw(theta):
     """
 
-    Returns a 7 x 7 numpy array representing the output matrix 
+    Returns a 7 x 7 numpy array representing the output matrix
+
+    Used when the yaw angle estimation is given
 
     """
-    U = np.array([R(theta).T, np.zeros(3,3), np.zeros(3,1)], 
-                  [np.zeros(3,3), R(theta).T, np.zeros(3,1)],
-                  [np.zeros(1,3), np.zeros(1,3), 1])
+    l_block = np.append(np.append(R(theta).T, np.zeros((3,3)), axis=0), np.zeros((1,3)), axis=0)
+    m_block = np.append(np.append(np.zeros((3,3)), R(theta).T, axis=0), np.zeros((1,3)), axis=0)
+    r_block = np.zeros((7,1))
+    U = np.concatenate((np.concatenate((l_block, m_block), axis=1), r_block), axis=1)
+    return U
+
+def U_with_out_yaw(theta):
+    """
+
+    Returns a 6 x 6 numpy array representing the output matrix
+
+    Used when the yaw angle estimation is not given
+
+    """
+    l_block = np.append(R(theta).T, np.zeros((3,3)), axis=0)
+    r_block = np.append(np.zeros((3,3)), R(theta).T, axis=0)
+    U = np.concatenate((l_block, r_block), axis=1)
     return U
 
 def E(theta):
@@ -87,25 +103,105 @@ def G(theta, w):
     """
     return Tc*E(theta)
 
-def Q_w(w):
+def Q_w():
     """
 
     Returns a 3 x 3 numpy array covariance matrix associated with w including
     both intrinsic and measurement uncertainty contributions
 
     """
-    Q = np.cov(w) # TODO: check
+    # TODO: read in measurement data
+
+    # TODO: parse into 3 vectors: x, y, and z
+    x = np.zeros((1,500))
+    y = np.zeros((1,500))
+    z = np.zeros((1,500))
+
+    # compute the covariance with the numpy function
+    Q = np.cov([x,y,z])
     return Q
 
-def H(theta):
+def Q_g():
     """
 
-    Returns a 3 x 3 numpy array representing the Jacobian of the
-    output matrix U * o_w
+    Returns a 3 x 3 numpy array correponding to the covariance matrix
+    of the gravitational acceleration vector g_r (from accelerometer)
 
     """
-    H = pd('U', 'theta', theta)*o_w(theta[2])
-    return H
+    # TODO: read in measurement data
+
+    # TODO: parse into 3 vectors: x, y, and z
+    x = np.zeros((1,500))
+    y = np.zeros((1,500))
+    z = np.zeros((1,500))
+
+    # compute the covariance with the numpy function
+    Q = np.cov([x,y,z])
+    return Q
+
+def Q_n():
+    """
+
+    Returns a 3 x 3 numpy array correponding to the covariance matrix
+    of the north-directed unit vector (from the compass)
+
+    """
+    # TODO: read in measurement data
+
+    # TODO: parse into 3 vectors: x, y, and z
+    x = np.zeros((1,500))
+    y = np.zeros((1,500))
+    z = np.zeros((1,500))
+
+    # compute the covariance with the numpy function
+    Q = np.cov([x,y,z])
+    return Q
+
+def H_with_yaw(theta, yaw):
+    """
+
+    Returns a 7 x 3 numpy array representing the Jacobian of the
+    output matrix U multiplied by o_w
+
+    Used when the yaw angle estimation is given
+
+    """
+    U_times_ow = sp.Matrix([-9.8*sp.sin(sps.y),
+                             9.8*sp.cos(sps.y)*sin(sps.x),
+                             9.8*sp.cos(sps.y)*sp.cos(sps.x),
+                             sp.cos(sps.z)*sp.cos(sps.y),
+                             sp.cos(sps.z)*sp.sin(sps.y) - sp.sin(sps.z)*sp.cos(sps.x),
+                             sp.sin(sps.z)*sp.sin(sps.x) + sp.cos(sps.z)*sp.sin(sps.y)*sp.cos(sps.x),
+                             yaw])
+    theta_vec = sp.Matrix([sps.x, sps.y, sps.z])
+    J = U_times_ow.jacobian(theta_vec) # unevaluated Jacobian
+    J_eval = U_times_ow.jacobian(theta_vec).subs([theta[0],
+                                                 theta[1],
+                                                 theta[2]])
+    J_eval = np.array(J_eval) # convert Jacobian to numpy array
+    return J_eval
+
+def H_with_out_yaw(theta):
+    """
+
+    Returns a 6 x 3 numpy array representing the Jacobian of the
+    output matrix U multiplied by o_w
+
+    Used when the yaw angle estimation is not given
+
+    """
+    U_times_ow = sp.Matrix([-9.8*sp.sin(sps.y),
+                            9.8*cos(sps.y)*sp.sin(sps.x),
+                            9.8*sp.cos(sps.y)*sp.cos(sps.x),
+                            sp.cos(sps.z)*sp.cos(sps.y),
+                            sp.sin(sps.z)*sp.sin(sps.x)+sp.cos(sps.z)*sp.sin(sps.y)*sp.cos(sps.x)])
+    theta_vec = sp.Matrix([sps.x, sps.y, sps.z])
+    J = U_times_ow.jacobian(theta_vec)
+    J_eval = U_times_ow.jacobian(theta_vec).subs([theta[0],
+                                                  theta[1],
+                                                  theta[2]])
+    J_eval = np.array(J_eval) # convert Jacobian to numpy array
+    return J_eval
 
 def o_w(yaw):
     """
@@ -114,16 +210,21 @@ def o_w(yaw):
     vector, the north directed unit vector and the current yaw
 
     """
-    o = np.matrix([g_w.T, n_w.T, yaw]).T
+    o = np.array([0, 0, 9.8, 1, 0, 1, yaw])
     return o
 
-def Q_o():
+def Q_o_with_out_yaw(g_r, n_r):
     """
 
-    Returns the covariance array of the current measurement vector o_r
+    Returns the covariance matrix of the current measurement vector o_r
 
     """
-    return 0 # TODO
+    g_cov = Q_g()
+    n_cov = Q_n()
+    top = np.append(g_cov, np.zeros((3,3)), axis=1)
+    bottom = np.append(np.zeros((3,3)), n_cov, axis=1)
+    Q_o = np.concatenate((top, bottom))
+    return Q_o
 
 def o_r(g_r, n_r, yaw_r):
     """
@@ -131,7 +232,8 @@ def o_r(g_r, n_r, yaw_r):
     Returns a 7 x 1 numpy array containing the current measurement vector
 
     """
-    o = np.matrix([g_r.T, n_r.T, yaw_r]).T
+    o = np.append(g_r, n_r)
+    o = np.append(o, yaw_r)
     return o
 
 def main():
