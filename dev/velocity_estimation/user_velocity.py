@@ -15,7 +15,38 @@ from scipy.signal import lfilter
 import matplotlib
 matplotlib.use("agg")
 import matplotlib.pyplot as plt
-from matplotlib.pyplot import imshow
+
+###########################################
+##                                       ##
+##      COORDINATE SYSTEM ALIGNMENT      ##
+##                                       ##
+###########################################
+
+def coordinate_sys_alignment(sensor_x, sensor_y, sensor_z):
+    '''
+    Transform accel & gyro data into orientation.
+    '''
+    # derive gravity component on each axis
+    vector_x = np.average(sensor_x)/sensor_x.shape[0]
+    vector_y = np.average(sensor_y)/sensor_y.shape[0]
+    vector_z = np.average(sensor_z)/sensor_z.shape[0]
+    vec = [vector_x, vector_y, vector_z]
+
+    # construct dynamic component of the sensor
+    d = [sensor_x-vector_x, sensor_y-vector_y, sensor_z-vector_z]
+
+    #for i in range(len(vec)):
+        # take norm of vector
+    v_sq = [vec[0]**2, vec[1]**2, vec[2]**2]
+    v_norm = np.sqrt(sum(v_sq))
+
+    # project dynamic component onto vector
+    vertical = ((np.dot(d, vec)/v_norm**2)*vec)
+
+    # calculate horizontal component
+    horizontal = (d - vec)
+
+    return vertical, horizontal
 
 ###########################################
 ##                                       ##
@@ -176,6 +207,12 @@ def main():
     iphone_gyro_x_filtered, iphone_gyro_y_filtered, iphone_gyro_z_filtered = low_pass_filter(iphone_gyro, "iPhoneGyroscope", 10)
     iwatch_accel_x_filtered, iwatch_accel_y_filtered, iwatch_accel_z_filtered = low_pass_filter(iwatch_accel, "iWatchAccelerometer", 6)
     iwatch_gyro_x_filtered, iwatch_gyro_y_filtered, iwatch_gyro_z_filtered = low_pass_filter(iwatch_gyro, "iWatchGyroscope", 14)
+
+    iphone_accel_horizonal, iphone_accel_vertical = coordinate_sys_alignment(iphone_accel_x_filtered, iphone_accel_y_filtered, iphone_accel_z_filtered)
+    iphone_gyro_horizonal, iphone_gyro_vertical = coordinate_sys_alignment(iphone_gyro_x_filtered, iphone_gyro_y_filtered, iphone_gyro_z_filtered)
+    iwatch_accel_horizonal, iwatch_accel_vertical = coordinate_sys_alignment(iwatch_accel_x_filtered, iwatch_accel_y_filtered, iwatch_accel_z_filtered)
+    iwatch_gyro_horizonal, iwatch_gyro_vertical = coordinate_sys_alignment(iwatch_gyro_x_filtered, iwatch_gyro_y_filtered, iwatch_gyro_z_filtered)
+
     print("Finished.")
 
 if __name__ == "__main__": 
