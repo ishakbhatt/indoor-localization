@@ -6,7 +6,7 @@ matplotlib.use("agg")
 import matplotlib.pyplot as plt
 from numpy import genfromtxt
 import pickle
-
+os.system("python matricies.py")
 
 #######################################
 ##
@@ -14,15 +14,19 @@ import pickle
 ##
 #######################################
 
-def first_ekf(mu, Sigma, Tc, E, w, F, G, Q_w, H, Q_o, o_r, o_w):
+def first_ekf(mu, Sigma, Tc, E, w, F, G, Q_w, H, Q_o, o_r, o_w, o_w_new):
     """
 
     First Extended Kalman Filter for IMU Localization. Algorithms
     obtained from Colombo et al.
 
-    Returns new Sigma (attitude covariance matrix) and new mu (attitude update). 
+    Returns a 3 x 3 numpy matrix representing the new Sigma (attitude
+    covariance matrix) and a 3 x 1 numpy matrix representing the new
+    mu (attitude update, or 3D vector containing estimated roll, pitch
+    and yaw). 
 
     mu: previous mean of the Gaussian distribution
+    Signma: a 3 x 3 numpy matrix equal to the previous attitude covariance matrix
     Tc: sampling period
     E: system matrix mapping angular velocities of the platform into 
         time derivatives of the angles
@@ -50,16 +54,16 @@ def first_ekf(mu, Sigma, Tc, E, w, F, G, Q_w, H, Q_o, o_r, o_w):
     # Use dynamics to predict what will happen
 
     mu_bar = mu + Tc*E*w
-    Signma_bar = F*Sigma*F.T + G*Q_w*G.T
+    Sigma_bar = F*Sigma*F.T + G*Q_w*G.T
 
     ########## CORRECTION STEP ##########
     # Use sensor measurement to correct prediction
 
     o_r_bar = U(mu_bar)*o_w
-    new_o_r = U(mu_bar)*o_w_new
+    new_o_r = U(mu_bar)*o_w_new # TODO: investigate this line
     K = Sigma_bar*H.T*np.linalg.inv(H*Sigma_bar*H.T + Q_o) # Kalman gain
     mu_new = mu_bar + K*(o_r - o_r_bar)
-    Sigma_new = (np.identity(K.shape[0] - K*H)*Sigma_bar
+    Sigma_new = (np.identity(K.shape[0] - K*H)*Sigma_bar)
 
     return mu_new, Sigma_new
     
