@@ -16,6 +16,7 @@ import matplotlib
 matplotlib.use("agg")
 import matplotlib.pyplot as plt
 from tensorflow import keras
+import tensorflow as tf
 
 ###########################################
 ##                                       ##
@@ -52,24 +53,80 @@ def construct_images(accel_horizontal_mag, accel_vertical_mag, gyro_horizontal_m
     images.append(combined[start:start+(combined.shape[0] % image_num_rows)])
     return images
 
-def convolutional_layer(images):
-    # employ (16, 32, 48, 64) conv filters with size of 2x2 and stride of 1
-    # Convolutional filter 1: 16x16
 
-    # Convolutional filter 2: 32x32
-    # Convolutional filter 3: 48x48
-    # Convolutional filter 4: 64x64
+def dcnn_convolutional_layer(images):
+    '''
+    Apply Convolutional layer to images.
+    '''
+    conv_16 = []
+    conv_32 = []
+    conv_48 = []
+    conv_64 = []
+
+    # apply 4 convolutional layers to each image
+    for image in range(len(images)):
+
+        # convert image to tensor object
+        tf_image = tf.convert_to_tensor(image)
+        # employ (16, 32, 48, 64) conv filters with kernel size of 2x2 and stride of 1 (default)
+        # Convolutional layer 1: 16 filters
+        convolved_16 = keras.layers.Conv2D(16, (2, 2))(tf_image)
+        # Convolutional layer 2: 32 filters
+        convolved_32 = keras.layers.Conv2D(32, (2, 2))(tf_image)
+        # Convolutional layer 3: 48 filters
+        convolved_48 = keras.layers.Conv2D(48, (2, 2))(tf_image)
+        # Convolutional layer 4: 64 filters
+        convolved_64 = keras.layers.Conv2D(64, (2, 2))(tf_image)
+
+        conv_16.append(convolved_16)
+        conv_32.append(convolved_32)
+        conv_48.append(convolved_48)
+        conv_64.append(convolved_64)
+
+    # TODO: "calculate the dot product of the weights of the filter and the input to optimize..."
+    return conv_16, conv_32, conv_48, conv_64
+
+def batch_norm(convolved_16, convolved_32, convolved_48, convolved_64):
+    '''
+    Apply batch normalization layer between convolutional layer and ReLU layer.
+    Batch normalization automatically standardizes inputs to a layer in the neural network.
+    https://machinelearningmastery.com/how-to-accelerate-learning-of-deep-neural-networks-with-batch-normalization/
+    - accelerates training process of a neural network and (sometimes) performance of model via regularization
+    - inputs will have mean 0 and std dev of 1
+    '''
+
+    bn = keras.layers.BatchNormalization()
+
+
 
 def deep_neural_network(horizontal_accel, vertical_accel, horizontal_gyro, vertical_gyro):
     '''
     Apply a DCNN to estimate user velocity.
+    https://keras.io/getting_started/intro_to_keras_for_engineers/
     '''
-    # https://machinelearningmastery.com/tensorflow-tutorial-deep-learning-with-tf-keras/
+
+    # construct the images: M images with size of 45x4x1, row consists of mag of horizontal/vertical components of accel/gyro
     accel_horizontal_mag, accel_vertical_mag = magnitude(horizontal_accel, vertical_accel)
     gyro_horizontal_mag, gyro_vertical_mag = magnitude(horizontal_gyro, vertical_gyro)
     images = construct_images(accel_horizontal_mag, accel_vertical_mag, gyro_horizontal_mag, gyro_vertical_mag)
 
+    # Create Keras model
+    model = keras.Sequential
+    # Apply convolutional layers
+    model.add(keras.layers.Conv2D(16, (2, 2)))
+    model.add(keras.layers.Conv2D(32, (2, 2)))
+    model.add(keras.layers.Conv2D(48, (2, 2)))
+    model.add(keras.layers.Conv2D(64, (2, 2)))
+    #convolved_16, convolved_32, convolved_48, convolved_48 = dcnn_convolutional_layer(images)
 
+    # batch normalization layer
+    model.add(keras.layers.BatchNormalization())
+
+    # ReLU activation layer
+    model.add(keras.layers.Activation('relu'))
+
+    # Max Pooling layer
+    model.add(keras.layers.MaxPooling2D())
 
 ###########################################
 ##                                       ##
