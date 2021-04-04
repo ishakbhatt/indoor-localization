@@ -159,12 +159,18 @@ def get_data_directory():
     os.chdir('../../dev/velocity_estimation/')
     return data_directory
 
+def new_gen_sensor_array(in_cols, device_csv_array):
+    """
+    Create NumPy array given columns to include.
+    """
+    return device_csv_array[:, in_cols]
+
 def gen_sensor_array(time_col, z_col, device_csv_array):
     """
     Create NumPy array given start and end rows and columns.
     """
     num_rows = len(device_csv_array)
-    return device_csv_array[0: num_rows-1, time_col: z_col]
+    return device_csv_array[:, time_col: z_col]
 
 def make_matrices():
     """
@@ -179,16 +185,14 @@ def make_matrices():
 
     ##################### create accel, gyro, magnetometer numpy arrays: iPhone #####################
     # accel
-    iphone_accel_time_col = 18
-    iphone_accel_z_col = 22
+    iphone_accel_cols = [0, 19, 20, 21]
     print("Generating iPhone Accel Array...")
-    iphone_accel = gen_sensor_array(iphone_accel_time_col, iphone_accel_z_col, iphone_csv_array)
+    iphone_accel = new_gen_sensor_array(iphone_accel_cols, iphone_csv_array)
 
     # gyro
-    iphone_gyro_time_col = 22
-    iphone_gyro_z_col = 26
+    iphone_gyro_cols = [0, 23, 24, 25]
     print("Generating iPhone Gyro Array...")
-    iphone_gyro = gen_sensor_array(iphone_gyro_time_col, iphone_gyro_z_col, iphone_csv_array)
+    iphone_gyro = new_gen_sensor_array(iphone_gyro_cols, iphone_csv_array)
 
     ##################### create accel, and gyro numpy arrays: iWatch #####################
     # accel
