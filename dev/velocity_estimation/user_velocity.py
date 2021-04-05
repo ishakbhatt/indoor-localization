@@ -244,7 +244,7 @@ def make_matrices():
     iwatch_accel = iwatch_accel.astype('float64')
 
     # gyro
-    iwatch_gyro_cols = [0, 15, 16, 17]
+    iwatch_gyro_cols = [0, 18, 19, 20]
     print("Generating iWatch Gyro Array...")
     iwatch_gyro = new_gen_sensor_array(iwatch_gyro_cols, iwatch_csv_array)
     iwatch_gyro = iwatch_gyro.astype('float64')
