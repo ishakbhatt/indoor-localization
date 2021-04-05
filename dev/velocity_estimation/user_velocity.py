@@ -17,6 +17,7 @@ matplotlib.use("agg")
 import matplotlib.pyplot as plt
 from tensorflow import keras
 import tensorflow as tf
+from sklearn.model_selection import train_test_split
 
 ###########################################
 ##                                       ##
@@ -43,6 +44,7 @@ def construct_images(accel_horizontal_mag, accel_vertical_mag, gyro_horizontal_m
     image_num_rows = 45
     # construct combined image
     combined = np.hstack(accel_horizontal_mag, accel_vertical_mag, gyro_horizontal_mag, gyro_vertical_mag)
+
     num_equal_images = (combined.shape[0]-(combined.shape[0] % image_num_rows))/image_num_rows
     start = 0
     for i in range(num_equal_images):
@@ -105,28 +107,64 @@ def deep_neural_network(horizontal_accel, vertical_accel, horizontal_gyro, verti
     https://keras.io/getting_started/intro_to_keras_for_engineers/
     '''
 
-    # construct the images: M images with size of 45x4x1, row consists of mag of horizontal/vertical components of accel/gyro
+    ##################### CONSTRUCT THE IMAGES #####################
+    # magnitude
     accel_horizontal_mag, accel_vertical_mag = magnitude(horizontal_accel, vertical_accel)
     gyro_horizontal_mag, gyro_vertical_mag = magnitude(horizontal_gyro, vertical_gyro)
     images = construct_images(accel_horizontal_mag, accel_vertical_mag, gyro_horizontal_mag, gyro_vertical_mag)
 
+    ##################### BUILD THE MODEL #####################
+
     # Create Keras model
-    model = keras.Sequential
-    # Apply convolutional layers
-    model.add(keras.layers.Conv2D(16, (2, 2)))
-    model.add(keras.layers.Conv2D(32, (2, 2)))
-    model.add(keras.layers.Conv2D(48, (2, 2)))
-    model.add(keras.layers.Conv2D(64, (2, 2)))
-    #convolved_16, convolved_32, convolved_48, convolved_48 = dcnn_convolutional_layer(images)
+    model = keras.Sequential()
 
-    # batch normalization layer
+    # CASCADED LAYER 1
+    model.add(keras.layers.Conv2D(filters=16, kernel_size=(2, 2)))
+    # batch normalization layer to lower sensitivity to network initialization
     model.add(keras.layers.BatchNormalization())
+    # ReLU activation layer
+    model.add(keras.layers.Activation('relu'))
+    # Max Pooling layer
+    model.add(keras.layers.MaxPooling2D(pool_size=(2,2)))
 
+    # CASCADED LAYER 2
+    model.add(keras.layers.Conv2D(filters=32, kernel_size=(2, 2)))
+    # batch normalization layer to lower sensitivity to network initialization
+    model.add(keras.layers.BatchNormalization())
+    # ReLU activation layer
+    model.add(keras.layers.Activation('relu'))
+    # Max Pooling layer
+    model.add(keras.layers.MaxPooling2D(pool_size=(2,2)))
+
+    # CASCADED LAYER 3
+    model.add(keras.layers.Conv2D(filters=48, kernel_size=(2, 2)))
+    # batch normalization layer to lower sensitivity to network initialization
+    model.add(keras.layers.BatchNormalization())
+    # ReLU activation layer
+    model.add(keras.layers.Activation('relu'))
+    # Max Pooling layer
+    model.add(keras.layers.MaxPooling2D(pool_size=(2,2)))
+
+    # CASCADED LAYER 4 (Maxpooling excluded in last group)
+    model.add(keras.layers.Conv2D(filters=64, kernel_size=(2, 2)))
+    # batch normalization layer to lower sensitivity to network initialization
+    model.add(keras.layers.BatchNormalization())
     # ReLU activation layer
     model.add(keras.layers.Activation('relu'))
 
-    # Max Pooling layer
-    model.add(keras.layers.MaxPooling2D())
+    # Dropout layer: alleviate overfitting
+    model.add(keras.layers.Dropout(.2))
+
+    # Fully connected layer: compute class scores fed into regression layer
+    model.add(keras.layers.Dense(1))
+
+    # Regression layer
+    model.add(keras.wrappers.scikit_learn.KerasRegressor())
+    # Summary
+    model.summary()
+
+    # compile model using mse as a measure of model performance
+    model.compile(loss='mean_squared_error')
 
 ###########################################
 ##                                       ##
