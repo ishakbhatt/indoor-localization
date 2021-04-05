@@ -18,6 +18,7 @@ matplotlib.use("agg")
 import matplotlib.pyplot as plt
 from tensorflow import keras
 from datetime import datetime, timezone
+import tensorflow as tf
 
 ###########################################
 ##                                       ##
@@ -25,13 +26,109 @@ from datetime import datetime, timezone
 ##                                       ##
 ###########################################
 
+def magnitude(horizontal, vertical):
+    '''
+    Take magnitude of each row of horizontal and vertical components.
+    '''
+    horizontal_magnitude = np.empty([horizontal.shape[0], 1])
+    vertical_magnitude = np.empty([vertical.shape[1], 1])
+    for i in range(horizontal.shape[0]):
+        horizontal_magnitude[i] = np.linalg.norm(horizontal[i])
+        vertical_magnitude[i] = np.linalg.norm(vertical[i])
+    return horizontal_magnitude, vertical_magnitude
+
+def construct_images(accel_horizontal_mag, accel_vertical_mag, gyro_horizontal_mag, gyro_vertical_mag):
+    '''
+    Construct 45x4x1 images of the horizontal and vertical magnitudes of accel & gyro sensors.
+    '''
+    images = []
+    image_num_rows = 45
+    # construct combined image
+    combined = np.hstack(accel_horizontal_mag, accel_vertical_mag, gyro_horizontal_mag, gyro_vertical_mag)
+    num_equal_images = (combined.shape[0]-(combined.shape[0] % image_num_rows))/image_num_rows
+    start = 0
+    for i in range(num_equal_images):
+        image = combined[start:start+image_num_rows, :]
+        images.append(image)
+        start = start + image_num_rows
+    # Combined image not guaranteed to be multiple of image_num_rows, so append last image (which will likely be smaller)
+    images.append(combined[start:start+(combined.shape[0] % image_num_rows)])
+    return images
+
+
+def dcnn_convolutional_layer(images):
+    '''
+    Apply Convolutional layer to images.
+    '''
+    conv_16 = []
+    conv_32 = []
+    conv_48 = []
+    conv_64 = []
+
+    # apply 4 convolutional layers to each image
+    for image in range(len(images)):
+
+        # convert image to tensor object
+        tf_image = tf.convert_to_tensor(image)
+        # employ (16, 32, 48, 64) conv filters with kernel size of 2x2 and stride of 1 (default)
+        # Convolutional layer 1: 16 filters
+        convolved_16 = keras.layers.Conv2D(16, (2, 2))(tf_image)
+        # Convolutional layer 2: 32 filters
+        convolved_32 = keras.layers.Conv2D(32, (2, 2))(tf_image)
+        # Convolutional layer 3: 48 filters
+        convolved_48 = keras.layers.Conv2D(48, (2, 2))(tf_image)
+        # Convolutional layer 4: 64 filters
+        convolved_64 = keras.layers.Conv2D(64, (2, 2))(tf_image)
+
+        conv_16.append(convolved_16)
+        conv_32.append(convolved_32)
+        conv_48.append(convolved_48)
+        conv_64.append(convolved_64)
+
+    # TODO: "calculate the dot product of the weights of the filter and the input to optimize..."
+    return conv_16, conv_32, conv_48, conv_64
+
+def batch_norm(convolved_16, convolved_32, convolved_48, convolved_64):
+    '''
+    Apply batch normalization layer between convolutional layer and ReLU layer.
+    Batch normalization automatically standardizes inputs to a layer in the neural network.
+    https://machinelearningmastery.com/how-to-accelerate-learning-of-deep-neural-networks-with-batch-normalization/
+    - accelerates training process of a neural network and (sometimes) performance of model via regularization
+    - inputs will have mean 0 and std dev of 1
+    '''
+
+    bn = keras.layers.BatchNormalization()
+
+
+
 def deep_neural_network(horizontal_accel, vertical_accel, horizontal_gyro, vertical_gyro):
     '''
     Apply a DCNN to estimate user velocity.
+    https://keras.io/getting_started/intro_to_keras_for_engineers/
     '''
-    # https://machinelearningmastery.com/tensorflow-tutorial-deep-learning-with-tf-keras/
-    # um what is a dcnn pls send help
 
+    # construct the images: M images with size of 45x4x1, row consists of mag of horizontal/vertical components of accel/gyro
+    accel_horizontal_mag, accel_vertical_mag = magnitude(horizontal_accel, vertical_accel)
+    gyro_horizontal_mag, gyro_vertical_mag = magnitude(horizontal_gyro, vertical_gyro)
+    images = construct_images(accel_horizontal_mag, accel_vertical_mag, gyro_horizontal_mag, gyro_vertical_mag)
+
+    # Create Keras model
+    model = keras.Sequential
+    # Apply convolutional layers
+    model.add(keras.layers.Conv2D(16, (2, 2)))
+    model.add(keras.layers.Conv2D(32, (2, 2)))
+    model.add(keras.layers.Conv2D(48, (2, 2)))
+    model.add(keras.layers.Conv2D(64, (2, 2)))
+    #convolved_16, convolved_32, convolved_48, convolved_48 = dcnn_convolutional_layer(images)
+
+    # batch normalization layer
+    model.add(keras.layers.BatchNormalization())
+
+    # ReLU activation layer
+    model.add(keras.layers.Activation('relu'))
+
+    # Max Pooling layer
+    model.add(keras.layers.MaxPooling2D())
 
 ###########################################
 ##                                       ##
@@ -51,18 +148,28 @@ def coordinate_sys_alignment(sensor_x, sensor_y, sensor_z):
 
     # construct dynamic component of the sensor
     d = [(sensor_x-vector_x), (sensor_y-vector_y), (sensor_z-vector_z)]
-
-    #for i in range(len(vec)):
-        # take norm of vector
     v_sq = [vec[0]**2, vec[1]**2, vec[2]**2]
     v_norm = np.sqrt(sum(v_sq))
 
-    # project dynamic component onto vector
-    vertical = ((np.dot(d, vec)/v_norm**2)*vec)
+    # horizontal and vertical components
+    vertical = []
+    horizontal = []
+    for i in range(d[0].shape[0]):
+        d_vec = [d[0][i], d[1][i], d[2][i]]
+        # project dynamic component onto vector
+        print("Projecting dynamic component from sample " + str(i) + " onto vertical...")
+        vertical_current = [(np.dot(d_vec, vec)/v_norm**2)*vec[0], (np.dot(d_vec, vec)/v_norm**2)*vec[1], (np.dot(d_vec, vec)/v_norm**2)*vec[2]]
+        vertical.append(vertical_current)
 
-    # calculate horizontal component
-    horizontal = (d - vec)
+        # calculate horizontal component
+        print("Computing horizontal component...")
+        horizontal_current = [d_vec[0]-vec[0], d_vec[1]-vec[1], d_vec[2]-vec[2]]
+        horizontal.append(horizontal_current)
 
+    print("Converting horizontal and vertical components into numpy arrays...")
+    vertical = np.array(vertical)
+    horizontal = np.array(horizontal)
+    print("Finished Coordinate System Alignment.")
     return vertical, horizontal
 
 ###########################################
@@ -81,7 +188,7 @@ def low_pass_filter(sensor_array, sensor, cutoff_freq):
 
     for i in range(len(xyz)):
         if i == 0:
-            samp_duration = sensor_array[sensor_array.shape[0]-1, 0]-sensor_array[0, 0]
+            samp_duration = sensor_array[:, 0]-sensor_array[0, 0]
             print("Calculating sample duration...")
         else:
             plt.figure()
@@ -130,7 +237,7 @@ def power_spectral_density(sensor_array, sensor):
         if (i!=0):
             sensor_overlap = (sensor_array.shape[1]/2)
             f_sample = 30 # 30 Hz sampling freq TODO: change to 100 Hz for final experiment
-            freq, p_density = welch(sensor_array[0:sensor_array.shape[0], i], f_sample, window='hann', noverlap=sensor_overlap)
+            freq, p_density = welch(sensor_array[:, i], f_sample, window='hann', noverlap=sensor_overlap)
             print("Calculated PSD for " + sensor + " " + xyz[i] + " axis" + ".")
 
             # Plot the PSD and save to results
@@ -273,11 +380,11 @@ def main():
     iphone_gyro_horizonal, iphone_gyro_vertical = coordinate_sys_alignment(iphone_gyro_x_filtered, iphone_gyro_y_filtered, iphone_gyro_z_filtered)
     iwatch_accel_horizonal, iwatch_accel_vertical = coordinate_sys_alignment(iwatch_accel_x_filtered, iwatch_accel_y_filtered, iwatch_accel_z_filtered)
     iwatch_gyro_horizonal, iwatch_gyro_vertical = coordinate_sys_alignment(iwatch_gyro_x_filtered, iwatch_gyro_y_filtered, iwatch_gyro_z_filtered)
-
+    '''
     user_velocity_iphone = deep_neural_network(iphone_accel_horizonal, iphone_accel_vertical, iphone_gyro_horizonal, iphone_gyro_vertical)
     user_velocity_iwatch = deep_neural_network(iwatch_accel_horizonal, iwatch_accel_vertical, iwatch_gyro_horizonal, iwatch_gyro_vertical)
     final_velocity = (user_velocity_iphone + user_velocity_iwatch) / 2
-    print("User Velocity Estimation: " + final_velocity)
+    print("User Velocity Estimation: " + final_velocity)'''
 
     print("Finished.")
 
