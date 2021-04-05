@@ -7,6 +7,7 @@
 
 # libraries & functions
 import os
+import csv
 import numpy as np
 from numpy import genfromtxt
 from scipy.signal import welch
@@ -16,6 +17,7 @@ import matplotlib
 matplotlib.use("agg")
 import matplotlib.pyplot as plt
 from tensorflow import keras
+from datetime import datetime, timezone
 
 ###########################################
 ##                                       ##
@@ -172,6 +174,44 @@ def gen_sensor_array(time_col, z_col, device_csv_array):
     num_rows = len(device_csv_array)
     return device_csv_array[:, time_col: z_col]
 
+def genfromtxt_with_unix_convert(data_dir, is_converted):
+    """
+    Read a csv file into a NumPy array.
+    Converts timestamps (in 0th column) to unix time if is_converted is False.
+    """
+    data = []
+    with open(data_dir, 'r') as imu_data:
+        csv_reader = csv.reader(imu_data, delimiter=',')
+        line_count = 0
+        if not is_converted:
+            for row in csv_reader:
+                if not line_count:
+                    line_count+= 1
+                    continue
+                date = row[0][0:12]
+                time = row[0][11:23]
+                y = int(date[0:4])
+                mo = int(date[5:7])
+                day = int(date[8:10])
+                h = int(time[0:2])
+                m = int(time[3:5])
+                s = int(time[6:8])
+                ms = int(time[9:12])
+                d = datetime(y, mo, day,h,m,s,ms,tzinfo=timezone.utc)
+                ts = datetime(y, mo, day,h,m,s,ms,tzinfo=timezone.utc).timestamp()
+                print(y, mo, day, h, m, s, d, ts)
+                row[0] = ts
+                data.append(row)
+                line_count+= 1
+        else:
+            for row in csv_reader:
+                if not line_count:
+                    line_count+= 1
+                    continue
+                data.append(row)
+                line_count+= 1
+    return np.asarray(data)
+
 def make_matrices():
     """
     Format IMU CSV data into Numpy matrices.
@@ -179,33 +219,35 @@ def make_matrices():
     data_dir = get_data_directory()
 
     print("Generating iPhone Array...")
-    iphone_csv_array = genfromtxt(os.path.join(data_dir, 'iphoneIMU.csv'), delimiter=",", skip_header=1)
+    iphone_csv_array = genfromtxt_with_unix_convert(os.path.join(data_dir, 'iphoneIMU.csv'), True)
     print("Generating iWatch Array...")
-    iwatch_csv_array = genfromtxt(os.path.join(data_dir, 'iWatchIMU.csv'), delimiter=",", skip_header=1)
+    iwatch_csv_array = genfromtxt_with_unix_convert(os.path.join(data_dir, 'iWatchIMU.csv'), False)
 
     ##################### create accel, gyro, magnetometer numpy arrays: iPhone #####################
     # accel
     iphone_accel_cols = [0, 19, 20, 21]
     print("Generating iPhone Accel Array...")
-    iphone_accel = new_gen_sensor_array(iphone_accel_cols, iphone_csv_array)
+    iphone_accel = new_gen_sensor_array(iphone_accel_cols, iphone_csv_array) # extract cols
+    iphone_accel = iphone_accel.astype('float64') # convert all values to floats
 
     # gyro
     iphone_gyro_cols = [0, 23, 24, 25]
     print("Generating iPhone Gyro Array...")
     iphone_gyro = new_gen_sensor_array(iphone_gyro_cols, iphone_csv_array)
+    iphone_gyro = iphone_gyro.astype('float64')
 
     ##################### create accel, and gyro numpy arrays: iWatch #####################
     # accel
-    iwatch_accel_time_col = 10
-    iwatch_accel_z_col = 14
+    iwatch_accel_cols = [0, 11, 12, 13]
     print("Generating iWatch Accel Array...")
-    iwatch_accel = gen_sensor_array(iwatch_accel_time_col, iwatch_accel_z_col, iwatch_csv_array)
+    iwatch_accel = new_gen_sensor_array(iwatch_accel_cols, iwatch_csv_array)
+    iwatch_accel = iwatch_accel.astype('float64')
 
     # gyro
-    iwatch_gyro_time_col = 14
-    iwatch_gyro_z_col = 18
+    iwatch_gyro_cols = [0, 15, 16, 17]
     print("Generating iWatch Gyro Array...")
-    iwatch_gyro = gen_sensor_array(iwatch_gyro_time_col, iwatch_gyro_z_col, iwatch_csv_array)
+    iwatch_gyro = new_gen_sensor_array(iwatch_gyro_cols, iwatch_csv_array)
+    iwatch_gyro = iwatch_gyro.astype('float64')
 
     # finish
     return iphone_accel, iphone_gyro, iwatch_accel, iwatch_gyro
