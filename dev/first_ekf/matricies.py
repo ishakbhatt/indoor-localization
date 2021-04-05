@@ -81,7 +81,9 @@ def F(theta, w):
                             (sp.sin(sps.r)*sps.y)/sp.cos(sps.p) + (sp.cos(sps.r)*sps.z)/sp.cos(sps.p)])
     theta_vec = sp.Matrix([sps.r, sps.p, sps.a])
     J = E_times_wr.jacobian(theta_vec) # unevaluated Jacobian
+    print("UNEVALUATED JACOBIAN")
     print(J) # for testing
+    print("---------------")
     J_eval = E_times_wr.jacobian(theta_vec).subs([(sps.r,theta[0]),
                                                   (sps.p,theta[1]),
                                                   (sps.a,theta[2]),
@@ -103,7 +105,7 @@ def G(theta, w):
     """
     return Tc*E(theta)
 
-def Q_w():
+def Q_w(w_r):
     """
 
     Returns a 3 x 3 numpy array covariance matrix associated with w including
@@ -113,15 +115,16 @@ def Q_w():
     # TODO: read in measurement data
 
     # TODO: parse into 3 vectors: x, y, and z
-    x = np.zeros((1,500))
-    y = np.zeros((1,500))
-    z = np.zeros((1,500))
+    x = (np.random.rand(1,500)).squeeze(0)
+    y = (np.random.rand(1,500)).squeeze(0)
+    z = (np.random.rand(1,500)).squeeze(0)
 
     # compute the covariance with the numpy function
     Q = np.cov([x,y,z])
-    return Q
+    Q_placeholder = np.identity(3) # assume low variance
+    return Q_placeholder
 
-def Q_g():
+def Q_g(g_r):
     """
 
     Returns a 3 x 3 numpy array correponding to the covariance matrix
@@ -131,15 +134,16 @@ def Q_g():
     # TODO: read in measurement data
 
     # TODO: parse into 3 vectors: x, y, and z
-    x = np.zeros((1,500))
-    y = np.zeros((1,500))
-    z = np.zeros((1,500))
+    x = (np.random.rand(1,500)).squeeze(0)
+    y = (np.random.rand(1,500)).squeeze(0)
+    z = (np.random.rand(1,500)).squeeze(0)
 
     # compute the covariance with the numpy function
     Q = np.cov([x,y,z])
-    return Q
+    Q_placeholder = np.identity(3)
+    return Q_placeholder
 
-def Q_n():
+def Q_n(n_r):
     """
 
     Returns a 3 x 3 numpy array correponding to the covariance matrix
@@ -149,13 +153,14 @@ def Q_n():
     # TODO: read in measurement data
 
     # TODO: parse into 3 vectors: x, y, and z
-    x = np.zeros((1,500))
-    y = np.zeros((1,500))
-    z = np.zeros((1,500))
+    x = (np.random.rand(1,500)).squeeze(0)
+    y = (np.random.rand(1,500)).squeeze(0)
+    z = (np.random.rand(1,500)).squeeze(0)
 
     # compute the covariance with the numpy function
     Q = np.cov([x,y,z])
-    return Q
+    Q_placeholder = np.identity(3)
+    return Q_placeholder
 
 def H_with_yaw(theta, yaw):
     """
@@ -191,15 +196,18 @@ def H_with_out_yaw(theta):
 
     """
     U_times_ow = sp.Matrix([-9.8*sp.sin(sps.y),
-                            9.8*cos(sps.y)*sp.sin(sps.x),
+                            9.8*sp.cos(sps.y)*sp.sin(sps.x),
                             9.8*sp.cos(sps.y)*sp.cos(sps.x),
                             sp.cos(sps.z)*sp.cos(sps.y),
                             sp.sin(sps.z)*sp.sin(sps.x)+sp.cos(sps.z)*sp.sin(sps.y)*sp.cos(sps.x)])
     theta_vec = sp.Matrix([sps.x, sps.y, sps.z])
     J = U_times_ow.jacobian(theta_vec)
-    J_eval = U_times_ow.jacobian(theta_vec).subs([theta[0],
-                                                  theta[1],
-                                                  theta[2]])
+    print("UNEVALUATED JACOBIAN")
+    print(J) # for testing
+    print("---------------")
+    J_eval = U_times_ow.jacobian(theta_vec).subs([(sps.x,theta[0]),
+                                                  (sps.y,theta[1]),
+                                                  (sps.z,theta[2])])
     J_eval = np.array(J_eval) # convert Jacobian to numpy array
     return J_eval
 
@@ -216,11 +224,12 @@ def o_w(yaw):
 def Q_o_with_out_yaw(g_r, n_r):
     """
 
-    Returns the covariance matrix of the current measurement vector o_r
+    Returns a 6 x 6 numpy array representing the covariance matrix
+    of the current measurement vector o_r
 
     """
-    g_cov = Q_g()
-    n_cov = Q_n()
+    g_cov = Q_g(g_r)
+    n_cov = Q_n(n_r)
     top = np.append(g_cov, np.zeros((3,3)), axis=1)
     bottom = np.append(np.zeros((3,3)), n_cov, axis=1)
     Q_o = np.concatenate((top, bottom))
