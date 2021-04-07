@@ -57,7 +57,8 @@ def construct_images(accel_horizontal_mag, accel_vertical_mag, gyro_horizontal_m
     images.append(combined[start:start+(combined.shape[0] % image_num_rows)])
     return images
 
-def deep_neural_network(horizontal_accel, vertical_accel, horizontal_gyro, vertical_gyro):
+def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal_gyro_train, vertical_gyro_train, velocity_train,
+                        horizontal_accel_test, vertical_accel_test, horizontal_gyro_test, vertical_gyro_test, velocity_test): # TODO: update with train and test
     '''
     Apply a DCNN to estimate user velocity.
     https://keras.io/getting_started/intro_to_keras_for_engineers/
@@ -65,9 +66,17 @@ def deep_neural_network(horizontal_accel, vertical_accel, horizontal_gyro, verti
 
     ##################### CONSTRUCT THE IMAGES #####################
     # magnitude
-    accel_horizontal_mag, accel_vertical_mag = magnitude(horizontal_accel, vertical_accel)
-    gyro_horizontal_mag, gyro_vertical_mag = magnitude(horizontal_gyro, vertical_gyro)
-    images = construct_images(accel_horizontal_mag, accel_vertical_mag, gyro_horizontal_mag, gyro_vertical_mag)
+    accel_horizontal_mag_train, accel_vertical_mag_train = magnitude(horizontal_accel_train, vertical_accel_train)
+    gyro_horizontal_mag_train, gyro_vertical_mag_train = magnitude(horizontal_gyro_train, vertical_gyro_train)
+    images_train = construct_images(accel_horizontal_mag_train, accel_vertical_mag_train, gyro_horizontal_mag_train, gyro_vertical_mag_train)
+
+    accel_horizontal_mag_test, accel_vertical_mag_test = magnitude(horizontal_accel_test, vertical_accel_test)
+    gyro_horizontal_mag_test, gyro_vertical_mag_test = magnitude(horizontal_gyro_test, vertical_gyro_test)
+    images_test = construct_images(accel_horizontal_mag_test, accel_vertical_mag_test, gyro_horizontal_mag_test, gyro_vertical_mag_test)
+
+    # combined TODO: decide combined or constructed images
+    combined_train = np.hstack(accel_horizontal_mag_train, accel_vertical_mag_train, gyro_horizontal_mag_train, gyro_vertical_mag_train)
+    combined_test = np.hstack(accel_horizontal_mag_test, accel_vertical_mag_test, gyro_horizontal_mag_test, gyro_vertical_mag_test)
 
     ##################### BUILD THE MODEL #####################
 
@@ -81,7 +90,7 @@ def deep_neural_network(horizontal_accel, vertical_accel, horizontal_gyro, verti
     # ReLU activation layer
     model.add(keras.layers.Activation('relu'))
     # Max Pooling layer
-    model.add(keras.layers.MaxPooling2D(pool_size=(2,2)))
+    model.add(keras.layers.MaxPooling2D(pool_size=(2, 2)))
 
     # CASCADED LAYER 2
     model.add(keras.layers.Conv2D(filters=32, kernel_size=(2, 2)))
@@ -90,7 +99,7 @@ def deep_neural_network(horizontal_accel, vertical_accel, horizontal_gyro, verti
     # ReLU activation layer
     model.add(keras.layers.Activation('relu'))
     # Max Pooling layer
-    model.add(keras.layers.MaxPooling2D(pool_size=(2,2)))
+    model.add(keras.layers.MaxPooling2D(pool_size=(2, 2)))
 
     # CASCADED LAYER 3
     model.add(keras.layers.Conv2D(filters=48, kernel_size=(2, 2)))
@@ -99,7 +108,7 @@ def deep_neural_network(horizontal_accel, vertical_accel, horizontal_gyro, verti
     # ReLU activation layer
     model.add(keras.layers.Activation('relu'))
     # Max Pooling layer
-    model.add(keras.layers.MaxPooling2D(pool_size=(2,2)))
+    model.add(keras.layers.MaxPooling2D(pool_size=(2, 2)))
 
     # CASCADED LAYER 4 (Maxpooling excluded in last group)
     model.add(keras.layers.Conv2D(filters=64, kernel_size=(2, 2)))
@@ -121,6 +130,20 @@ def deep_neural_network(horizontal_accel, vertical_accel, horizontal_gyro, verti
 
     # compile model using mse as a measure of model performance
     model.compile(loss='mean_squared_error')
+
+    # fit the model (Train) # TODO: tune epoch and batch_size
+    model.fit(combined_train, velocity_train, validation_data=(combined_train, velocity_train), epochs=1, batch_size=combined_train.shape[0])
+
+    # evaluate the model
+    print("Evaluate on test data")
+    results = model.evaluate(combined_test, velocity_test, batch_size=128) # todo: fix
+    print("test loss, test acc:", results)
+
+    # Generate predictions (probabilities -- the output of the last layer)
+    # on new data using `predict`
+    print("Generate predictions for 3 samples")
+    predictions = model.predict(combined_test[:3])
+    print("predictions shape:", predictions.shape)
 
 ###########################################
 ##                                       ##
@@ -511,7 +534,53 @@ def main():
         iphone_gyro_horizontal_test[i], iphone_gyro_vertical_test[i] = coordinate_sys_alignment(iphone_gyro_filtered_test[i][0], iphone_gyro_filtered_test[i][1], iphone_gyro_filtered_test[i][2])
         iwatch_accel_horizontal_test[i], iwatch_accel_vertical_test[i] = coordinate_sys_alignment(iwatch_accel_filtered_test[i][0], iwatch_accel_filtered_test[i][1], iwatch_accel_filtered_test[i][2])
         iwatch_gyro_horizontal_test[i], iwatch_gyro_vertical_test[i] = coordinate_sys_alignment(iwatch_gyro_filtered_test[i][0], iwatch_gyro_filtered_test[i][1], iwatch_gyro_filtered_test[i][2])
-    '''
+        
+    # Combine training data into one numpy array
+    iphone_accel_h_train = np.empty([iphone_accel_horizontal_train[0].shape[0], 3])
+    iphone_accel_v_train = np.empty([iphone_accel_vertical_train[0].shape[1], 3])
+    iphone_gyro_h_train = np.empty([iphone_accel_horizontal_train[0].shape[0], 3])
+    iphone_gyro_v_train = np.empty([iphone_accel_vertical_train[0].shape[1], 3])
+    
+    iwatch_accel_h_train = np.empty([iwatch_accel_horizontal_train[0].shape[0], 3])
+    iwatch_accel_v_train = np.empty([iwatch_accel_vertical_train[0].shape[1], 3])
+    iwatch_gyro_h_train = np.empty([iwatch_accel_horizontal_train[0].shape[0], 3])
+    iwatch_gyro_v_train = np.empty([iwatch_accel_vertical_train[0].shape[1], 3])
+    
+    iphone_accel_h_test = np.empty([iphone_accel_horizontal_test[0].shape[0], 3])
+    iphone_accel_v_test = np.empty([iphone_accel_vertical_test[0].shape[1], 3])
+    iphone_gyro_h_test = np.empty([iphone_accel_horizontal_test[0].shape[0], 3])
+    iphone_gyro_v_test = np.empty([iphone_accel_vertical_test[0].shape[1], 3])
+  
+    iwatch_accel_h_test = np.empty([iwatch_accel_horizontal_test[0].shape[0], 3])
+    iwatch_accel_v_test = np.empty([iwatch_accel_vertical_test[0].shape[1], 3])
+    iwatch_gyro_h_test = np.empty([iwatch_accel_horizontal_test[0].shape[0], 3])
+    iwatch_gyro_v_test = np.empty([iwatch_accel_vertical_test[0].shape[1], 3])
+    
+    for i in reversed(range(7)):
+        iphone_accel_h_train.vstack(iphone_accel_horizontal_train[i])
+        iphone_accel_v_train.vstack(iphone_accel_vertical_train[i])
+        iphone_gyro_h_train.vstack(iphone_gyro_horizontal_train[i])
+        iwatch_accel_h_train.vstack(iwatch_accel_horizontal_train[i])
+        iwatch_accel_v_train.vstack(iwatch_accel_vertical_train[i])
+        iwatch_gyro_h_train.vstack(iwatch_gyro_vertical_train[i])
+        iwatch_gyro_h_train.vstack(iwatch_gyro_horizontal_train[i])
+        iphone_gyro_h_train.vstack(iphone_gyro_vertical_train[i])
+        
+    for i in reversed(range(3)): # combine all 
+        iphone_accel_h_test.vstack(iphone_accel_horizontal_test[i])
+        iphone_accel_v_test.vstack(iphone_accel_vertical_test[i])
+        iphone_gyro_h_test.vstack(iphone_gyro_horizonal_test[i])
+        iphone_gyro_v_test.vstack(iphone_gyro_vertical_test[i])
+        
+        iwatch_accel_h_test.vstack(iwatch_accel_horizontal_test[i])
+        iwatch_accel_v_test.vstack(iwatch_accel_vertical_test[i])
+        iwatch_gyro_h_test.vstack(iwatch_gyro_horizonal_test[i])
+        iwatch_gyro_v_test.vstack(iwatch_gyro_vertical_test[i])
+        
+    # TODO: combine arrays above with velocity column
+    deep_neural_network(iphone_accel_h_train, iphone_accel_v_train, iphone_gyro_h_train, iphone_gyro_v_train, velocity_train, iphone_accel_h_test, iphone_accel_v_test, iphone_gyro_h_test, iphone_gyro_v_test, velocity_test)
+    deep_neural_network(iwatch_accel_h_train, iwatch_accel_v_train, iwatch_gyro_h_train, iwatch_gyro_v_train, velocity_train, iwatch_accel_h_test, iwatch_accel_v_test, iwatch_gyro_h_test, iwatch_gyro_v_test, velocity_test)
+            '''
 
     # Low Pass filter accel and gyro data
     '''
