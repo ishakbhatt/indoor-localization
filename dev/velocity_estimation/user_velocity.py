@@ -10,16 +10,16 @@ import os
 import csv
 import numpy as np
 from numpy import genfromtxt
-from scipy.signal import welch
-from scipy.signal import butter
-from scipy.signal import lfilter
+# from scipy.signal import welch
+# from scipy.signal import butter
+# from scipy.signal import lfilter
 import matplotlib
 matplotlib.use("agg")
 import matplotlib.pyplot as plt
-from tensorflow import keras
+# from tensorflow import keras
 from datetime import datetime, timezone
-import tensorflow as tf
-from sklearn.model_selection import train_test_split
+# import tensorflow as tf
+# from sklearn.model_selection import train_test_split
 
 ###########################################
 ##                                       ##
@@ -248,12 +248,12 @@ def power_spectral_density(sensor_array, sensor):
 ##                                   ##
 #######################################
 
-def get_data_directory():
+def get_data_directory(data):
     """
-    Return repository data directory.
+    Return specified repository in data directory.
     """
     # change directory
-    os.chdir('../../data/initial/')
+    os.chdir('../../data/' + data + '/')
     # get working directory
     data_directory = os.getcwd()
     print(data_directory)
@@ -298,7 +298,6 @@ def genfromtxt_with_unix_convert(data_dir, is_converted):
                 ms = int(time[9:12])
                 d = datetime(y, mo, day,h,m,s,ms,tzinfo=timezone.utc)
                 ts = datetime(y, mo, day,h,m,s,ms,tzinfo=timezone.utc).timestamp()
-                print(y, mo, day, h, m, s, d, ts)
                 row[0] = ts
                 data.append(row)
                 line_count+= 1
@@ -315,7 +314,8 @@ def make_matrices():
     """
     Format IMU CSV data into Numpy matrices.
     """
-    data_dir = get_data_directory()
+    # data_dir = get_data_directory('initial')
+    data_dir = data_dir = '/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/data/initial/'
 
     print("Generating iPhone Array...")
     iphone_csv_array = genfromtxt_with_unix_convert(os.path.join(data_dir, 'iphoneIMU.csv'), True)
@@ -353,6 +353,7 @@ def make_matrices():
 
 # test
 def main():
+    make_matrices()
     # TODO: both train and test
     # TODO: linear approximation
     # Turn CSV into numpy matrices
