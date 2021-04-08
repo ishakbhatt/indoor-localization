@@ -33,17 +33,17 @@ def parse_dcnn_data(set_type, device, set_num):
         print("Incorrect device parameter. Please input 'iphone' or 'watch' device.")
         sys.exit()
 
-    if(set_num > 3 or set_num < 1):
-        print("Incorrect set number parameter. Please input set number 1, 2, or 3.")
-        sys.exit()
+    #if(set_num > 3 or set_num < 1):
+    #    print("Incorrect set number parameter. Please input set number 1, 2, or 3.")
+    #    sys.exit()
 
     # init output arrays
     gyro_data = [0,0,0,0,0]
     accel_data = [0,0,0,0,0]
     
     # get correct directory
-    # data_dir = uv.get_data_directory('train')
-    data_dir = '/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/data/' + set_type + '/'
+    data_dir = uv.get_data_directory(set_type)
+    #data_dir = '/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/data/' + set_type + '/'
 
     # get timestamp and vel
     if(set_type == 'train'):

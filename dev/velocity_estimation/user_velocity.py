@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 ###########################################
 ##                                       ##
 ##  USER VELOCITY ESTIMATION ALGORITHM   ##
@@ -10,16 +9,17 @@ import os
 import csv
 import numpy as np
 from numpy import genfromtxt
-# from scipy.signal import welch
-# from scipy.signal import butter
-# from scipy.signal import lfilter
+from scipy.signal import welch
+from scipy.signal import butter
+from scipy.signal import lfilter
 import matplotlib
 matplotlib.use("agg")
 import matplotlib.pyplot as plt
-# from tensorflow import keras
+from tensorflow import keras
 from datetime import datetime, timezone
-# import tensorflow as tf
-# from sklearn.model_selection import train_test_split
+import tensorflow as tf
+import parse
+from sklearn.model_selection import train_test_split
 
 ###########################################
 ##                                       ##
@@ -310,19 +310,20 @@ def genfromtxt_with_unix_convert(data_dir, is_converted):
                 if not line_count:
                     line_count+= 1
                     continue
-                date = row[0][0:12]
-                time = row[0][11:23]
-                y = int(date[0:4])
-                mo = int(date[5:7])
-                day = int(date[8:10])
-                h = int(time[0:2])
-                m = int(time[3:5])
-                s = int(time[6:8])
-                ms = int(time[9:12])
-                d = datetime(y, mo, day,h,m,s,ms,tzinfo=timezone.utc)
-                ts = datetime(y, mo, day,h,m,s,ms,tzinfo=timezone.utc).timestamp()
-                row[0] = ts
-                data.append(row)
+                if line_count!=1:
+                    date = row[0][0:12]
+                    time = row[0][11:23]
+                    y = int(date[0:4])
+                    mo = int(date[5:7])
+                    day = int(date[8:10])
+                    h = int(time[0:2])
+                    m = int(time[3:5])
+                    s = int(time[6:8])
+                    ms = int(time[9:12])
+                    d = datetime(y, mo, day,h,m,s,ms,tzinfo=timezone.utc)
+                    ts = datetime(y, mo, day,h,m,s,ms,tzinfo=timezone.utc).timestamp()
+                    row[0] = ts
+                    data.append(row)
                 line_count+= 1
         else:
             for row in csv_reader:
@@ -376,12 +377,48 @@ def make_matrices():
 
 # test
 def main():
-    make_matrices()
-    # TODO: both train and test
-    # TODO: linear approximation
-    # Turn CSV into numpy matrices
-    iphone_accel, iphone_gyro, iwatch_accel, iwatch_gyro = make_matrices()
 
+    # Parse time, accel xyz, gyro xyz, velocity into numpy arrays
+    iphone_accel_train = []
+    iphone_gyro_train = []
+    iwatch_accel_train = []
+    iwatch_gyro_train = []
+
+    iphone_accel_test = []
+    iphone_gyro_test = []
+    iwatch_accel_test = []
+    iwatch_gyro_test = []
+
+    for i in range(8):
+        if i != 0:
+            phone_a_train, phone_g_train = parse.parse_dcnn_data('train', 'iphone', i)
+            watch_a_train, watch_g_train = parse.parse_dcnn_data('train', 'watch', i)
+            iphone_accel_train.append(phone_a_train)
+            iphone_gyro_train.append(phone_g_train)
+            iwatch_accel_train.append(watch_a_train)
+            iwatch_gyro_train.append(watch_g_train)
+
+    for i in range(4):
+        if i != 0:
+            phone_a_test, phone_g_test = parse.parse_dcnn_data('test', 'iphone', i)
+            watch_a_test, watch_g_test = parse.parse_dcnn_data('test', 'watch', i)
+            iphone_accel_test.append(phone_a_test)
+            iphone_gyro_test.append(phone_g_test)
+            iwatch_accel_test.append(watch_a_test)
+            iwatch_gyro_test.append(watch_g_test)
+
+    # Plot PSD using Welch's method for cutoff freqs
+    for i in range(7):
+        iphone_train_accel_sensor = "iPhoneAccelTrain" + str(i)
+        iphone_train_gyro_sensor = "iPhoneGyroTrain" + str(i)
+        iwatch_train_accel_sensor = "iWatchAccelTrain" + str(i)
+        iwatch_train_gyro_sensor = "iWatchGyroTrain" + str(i)
+        power_spectral_density(iphone_accel_train[i], iphone_train_accel_sensor)
+        power_spectral_density(iphone_gyro_train[i], iphone_train_gyro_sensor)
+        power_spectral_density(iwatch_accel_train[i], iwatch_train_accel_sensor)
+        power_spectral_density(iwatch_gyro_train[i], iwatch_train_gyro_sensor)
+
+    print("Success!")
     # LPF cutoff frequencies:
     '''
     # Plot PSD using Welch's method for cutoff freqs
