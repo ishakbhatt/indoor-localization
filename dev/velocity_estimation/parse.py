@@ -46,8 +46,11 @@ def parse_dcnn_data(set_type, device, set_num):
     data_dir = '/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/data/' + set_type + '/'
 
     # get timestamp and vel
+    if(set_type == 'train'):
+        vel_cols = [2, 3]
+    else:
+        vel_cols = [4, 5]
     vel_arr = uv.genfromtxt_with_unix_convert(os.path.join(data_dir, set_type + '_vel' + str(set_num) + '.csv'), True)
-    vel_cols = [2, 3]
     vel_arr = uv.new_gen_sensor_array(vel_cols, vel_arr)
     vel_arr = vel_arr.astype('float64')
 
@@ -56,23 +59,35 @@ def parse_dcnn_data(set_type, device, set_num):
         imu_arr = uv.genfromtxt_with_unix_convert(os.path.join(data_dir, set_type + '_' + device + str(set_num) + '.csv'), True)
         timestamps = uv.new_gen_sensor_array([0], imu_arr)
         timestamps = timestamps.astype('float64') - 14400
+
+        # accel
+        accel_cols = [19, 20, 21]
+        accel = uv.new_gen_sensor_array(accel_cols, imu_arr) # extract cols
+        accel = accel.astype('float64') # convert all values to floats
+        accel = np.concatenate((timestamps, accel), axis=1)
+
+        # gyro
+        gyro_cols = [23, 24, 25]
+        gyro = uv.new_gen_sensor_array(gyro_cols, imu_arr)
+        gyro = gyro.astype('float64')
+        gyro = np.concatenate((timestamps, gyro), axis=1)
+
     elif(device == 'watch'):
         imu_arr = uv.genfromtxt_with_unix_convert(os.path.join(data_dir, set_type + '_' + device + str(set_num) + '.csv'), False)
         timestamps = uv.new_gen_sensor_array([0], imu_arr)
         timestamps = timestamps.astype('float64')
 
-    # accel
-    
-    accel_cols = [19, 20, 21]
-    accel = uv.new_gen_sensor_array(accel_cols, imu_arr) # extract cols
-    accel = accel.astype('float64') # convert all values to floats
-    accel = np.concatenate((timestamps, accel), axis=1)
+        # accel
+        accel_cols = [11, 12, 13]
+        accel = uv.new_gen_sensor_array(accel_cols, imu_arr)
+        accel = accel.astype('float64')
+        accel = np.concatenate((timestamps, accel), axis=1)
 
-    # gyro
-    gyro_cols = [23, 24, 25]
-    gyro = uv.new_gen_sensor_array(gyro_cols, imu_arr)
-    gyro = gyro.astype('float64')
-    gyro = np.concatenate((timestamps, gyro), axis=1)
+        # gyro
+        gyro_cols = [18, 19, 20]
+        gyro = uv.new_gen_sensor_array(gyro_cols, imu_arr)
+        gyro = gyro.astype('float64')
+        gyro = np.concatenate((timestamps, gyro), axis=1)
 
     # init loop variables
     curr_time = vel_arr[0][0]
@@ -104,8 +119,22 @@ def parse_dcnn_data(set_type, device, set_num):
     return accel_data, gyro_data
 
 def main():
-    a, g = parse_dcnn_data('train', 'iphone', 1)
-    aa, gg = parse_dcnn_data('train', 'watch', 1)
+    # train
+    a1, g1 = parse_dcnn_data('train', 'iphone', 1)
+    a2, g2 = parse_dcnn_data('train', 'watch', 1) 
+    a1, g1 = parse_dcnn_data('train', 'iphone', 2)
+    a2, g2 = parse_dcnn_data('train', 'watch', 2) 
+    a1, g1 = parse_dcnn_data('train', 'iphone', 3)
+    a2, g2 = parse_dcnn_data('train', 'watch', 3) 
+
+    # test
+    a1, g1 = parse_dcnn_data('test', 'iphone', 1)
+    a2, g2 = parse_dcnn_data('test', 'watch', 1) 
+    a1, g1 = parse_dcnn_data('test', 'iphone', 2)
+    a2, g2 = parse_dcnn_data('test', 'watch', 2) 
+    a1, g1 = parse_dcnn_data('test', 'iphone', 3)
+    a2, g2 = parse_dcnn_data('test', 'watch', 3) 
+    
     print("Success!")
 
 if __name__ == "__main__": 
