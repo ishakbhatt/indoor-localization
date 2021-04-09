@@ -1,8 +1,11 @@
 import os
 import sys
+import csv
 import numpy as np
 import itertools
 import user_velocity as uv
+from datetime import datetime, timezone
+import pandas as pd
 
 def parse_dcnn_data(set_type, device, set_num):
     """
@@ -33,17 +36,12 @@ def parse_dcnn_data(set_type, device, set_num):
         print("Incorrect device parameter. Please input 'iphone' or 'watch' device.")
         sys.exit()
 
-    #if(set_num > 3 or set_num < 1):
-    #    print("Incorrect set number parameter. Please input set number 1, 2, or 3.")
-    #    sys.exit()
-
     # init output arrays
     gyro_data = [0,0,0,0,0]
     accel_data = [0,0,0,0,0]
     
     # get correct directory
     data_dir = uv.get_data_directory(set_type)
-    #data_dir = '/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/data/' + set_type + '/'
 
     # get timestamp and vel
     if(set_type == 'train'):
@@ -118,6 +116,80 @@ def parse_dcnn_data(set_type, device, set_num):
 
     return accel_data, gyro_data
 
+
+def parse_rssi_data(m, d, y, set_num, threshold):
+    """
+
+    Returns an n x 7 numpy array with RSSI data for the specified set_num.
+
+    Columns:
+    - unix timestamp
+    - ground truth x
+    - ground truth y
+    - Node 1 RSSI values
+    - Node 2 RSSI values
+    - Node 3 RSSI values
+    - NOde 4 RSSI values
+
+    Takes in the date the data was recorded (needed for unix
+    timestamp conversion):
+
+        m - month
+        d - day
+        y - year
+
+    Takes in a threshold in seconds for assigning RSSI values at a given timestamp.
+
+    """
+    rssi_data = []
+    # get correct directory
+    data_dir = uv.get_data_directory(set_type)
+
+    # read in velocity vec and extract timestamp and coordinate
+    vel_cols = [4, 0, 1]
+    vel_arr = uv.genfromtxt_with_unix_convert(data_dir + 'test_vel' + str(set_num) + '.csv', True)
+    vel_arr = uv.new_gen_sensor_array(vel_cols, vel_arr)
+    vel_arr = vel_arr.astype('float64')
+
+    rssi_raw_data = []
+
+    with open(data_dir + 'test_rssi' + str(set_num) + '.csv', 'r') as rssi: # read in RSSI file for the given set_num
+        csv_reader = csv.reader(rssi, delimiter=',')
+        next(csv_reader) # skip header
+        for row in csv_reader:
+            ssid = row[0]
+            i = 0 # node_reading count
+            while(ssid[0:4] == 'Node'):
+                if(len(rssi_raw_data) < i + 1): # first reading of node values
+                    # get and append timestamp
+                    h = int(row[4][2:3]) + 12
+                    min = int(row[4][4:6]) # extract hour + 12, minute, second
+                    s = int(row[4][7:9])
+                    ts = datetime(y, m, d,h, min,s,0,tzinfo=timezone.utc).timestamp()
+                    empty = [0, 0, 0, 0, 0]
+                    empty[0] = ts
+                    rssi_raw_data.append(empty) # add a new row
+
+                # get and append rssi_val
+                node_num = int(ssid[5]) # get Node
+                rssi_val = row[2][3:5] # get RSSI value (remove negative sign)
+                rssi_raw_data[i][node_num] = rssi_val
+                
+                i += 1 # go to next timestamp
+                row = next(csv_reader) # read next row
+                ssid = row[0] # update ssid
+    
+    # get closest ground truth coordinate at given timestamp
+    for v_row in vel_arr:
+        for r_row in rssi_raw_data:
+            if((r_row[0] >= v_row[0] - threshold) and (r_row[0] <= v_row[0] + threshold)):
+                final_data = np.concatenate((v_row, r_row[1:4]), axis=0)
+                final_data = final_data.tolist()
+                rssi_data.append(final_data)
+                break
+    print(len(rssi_data), "positions could be estimated from path", set_num)
+    return rssi_data
+
 def main():
     # train
     a1, g1 = parse_dcnn_data('train', 'iphone', 1)
@@ -134,6 +206,13 @@ def main():
     a2, g2 = parse_dcnn_data('test', 'watch', 2) 
     a1, g1 = parse_dcnn_data('test', 'iphone', 3)
     a2, g2 = parse_dcnn_data('test', 'watch', 3) 
+    
+    # Uncomment to parse rssi_data into a csv file
+    # threshold = 2 # seconds
+    # for i in range(1,4):
+    #     r = parse_rssi_data(4,5,2021,i,threshold) # 
+    #     df = pd.DataFrame(r)
+    #     df.to_csv('test_rssi_parsed' + str(i) + '_thresh' + str(threshold) + '.csv', index=False)
     
     print("Success!")
 
