@@ -8,7 +8,7 @@
 import os
 import csv
 import numpy as np
-from numpy import genfromtxt
+import pandas as pd
 from scipy.signal import welch
 from scipy.signal import butter
 from scipy.signal import lfilter
@@ -203,7 +203,7 @@ def low_pass_filter(sensor_array, sensor, cutoff_freq):
 
     for i in range(len(xyz)):
         if i == 0:
-            samp_duration = sensor_array[:, 0]-sensor_array[0, 0]
+            samp_duration = (sensor_array[:, 0]-sensor_array[0, 0])[sensor_array.shape[0]-1]
             print("Calculating sample duration...")
         else:
             plt.figure()
@@ -288,13 +288,6 @@ def new_gen_sensor_array(in_cols, device_csv_array):
     Create NumPy array given columns to include.
     """
     return device_csv_array[:, in_cols]
-
-def gen_sensor_array(time_col, z_col, device_csv_array):
-    """
-    Create NumPy array given start and end rows and columns.
-    """
-    num_rows = len(device_csv_array)
-    return device_csv_array[:, time_col: z_col]
 
 def genfromtxt_with_unix_convert(data_dir, is_converted):
     """
@@ -408,149 +401,74 @@ def main():
 
     # Plot PSD using Welch's method for cutoff freqs
     for i in range(7):
-        iphone_train_accel_sensor = "iPhoneAccelTrain" + str(i)
-        iphone_train_gyro_sensor = "iPhoneGyroTrain" + str(i)
-        iwatch_train_accel_sensor = "iWatchAccelTrain" + str(i)
-        iwatch_train_gyro_sensor = "iWatchGyroTrain" + str(i)
+        iphone_train_accel_sensor = "iPhoneAccelTrain" + str(i+1)
+        iphone_train_gyro_sensor = "iPhoneGyroTrain" + str(i+1)
+        iwatch_train_accel_sensor = "iWatchAccelTrain" + str(i+1)
+        iwatch_train_gyro_sensor = "iWatchGyroTrain" + str(i+1)
         power_spectral_density(iphone_accel_train[i], iphone_train_accel_sensor)
         power_spectral_density(iphone_gyro_train[i], iphone_train_gyro_sensor)
         power_spectral_density(iwatch_accel_train[i], iwatch_train_accel_sensor)
         power_spectral_density(iwatch_gyro_train[i], iwatch_train_gyro_sensor)
 
     for i in range(3):
-        iphone_test_accel_sensor = "iPhoneAccelTest" + str(i)
-        iphone_test_gyro_sensor = "iPhoneGyroTest" + str(i)
-        iwatch_test_accel_sensor = "iWatchAccelTest" + str(i)
-        iwatch_test_gyro_sensor = "iWatchGyroTest" + str(i)
+        iphone_test_accel_sensor = "iPhoneAccelTest" + str(i+1)
+        iphone_test_gyro_sensor = "iPhoneGyroTest" + str(i+1)
+        iwatch_test_accel_sensor = "iWatchAccelTest" + str(i+1)
+        iwatch_test_gyro_sensor = "iWatchGyroTest" + str(i+1)
         power_spectral_density(iphone_accel_test[i], iphone_test_accel_sensor)
         power_spectral_density(iphone_gyro_test[i], iphone_test_gyro_sensor)
         power_spectral_density(iwatch_accel_test[i], iwatch_test_accel_sensor)
         power_spectral_density(iwatch_gyro_test[i], iwatch_test_gyro_sensor)
 
-    print("Success!")
-    # LPF cutoff frequencies:
-    '''
-    # Plot PSD using Welch's method for cutoff freqs
-    for i in range(7):
-        iphone_train_accel_sensor = "iPhoneAccelTrain" + str(i)
-        iphone_train_gyro_sensor = "iPhoneGyroTrain" + str(i)
-        iwatch_train_accel_sensor = "iWatchAccelTrain" + str(i)
-        iwatch_train_gyro_sensor = "iWatchGyroTrain" + str(i)
-        power_spectral_density(iphone_accel_train[i], iphone_train_accel_sensor)
-        power_spectral_density(iphone_gyro_train[i], iphone_train_gyro_sensor)
-        power_spectral_density(iwatch_accel_train[i], iwatch_train_accel_sensor)
-        power_spectral_density(iwatch_gyro_train[i], iwatch_train_gyro_sensor)
-        
-    for i in range(3):
-        iphone_test_accel_sensor = "iPhoneAccelTest" + str(i)
-        iphone_test_gyro_sensor = "iPhoneGyroTest" + str(i)
-        iwatch_test_accel_sensor = "iWatchAccelTest" + str(i)
-        iwatch_test_gyro_sensor = "iWatchGyroTest" + str(i)
-        power_spectral_density(iphone_accel_test[i], iphone_test_accel_sensor)
-        power_spectral_density(iphone_gyro_test[i], iphone_test_gyro_sensor)
-        power_spectral_density(iwatch_accel_test[i], iwatch_test_accel_sensor)
-        power_spectral_density(iwatch_gyro_test[i], iwatch_test_gyro_sensor)
-    
-    # maybe put into spreadsheets: 
-    # sheet 1:iphone train (rows - accel/gyro) (cols - train #)
-    # sheet 2:iwatch train (rows - accel/gyro) (cols - train #)
-    # sheet 3:iwatch test (rows - accel/gyro) (cols - test #)
-    # sheet 4:iwatch test (rows - accel/gyro) (cols - test #)
-    
-    iphone_accel_train1 =
-    iphone_gyro_train1 =
-    
-    iphone_gyro_train2 =
-    iphone_accel_train2 =
-    
-    iphone_accel_train3 =
-    iphone_gyro_train3 =
-    
-    iphone_accel_train4 =
-    iphone_gyro_train4 =
-    
-    iphone_accel_train5 =
-    iphone_gyro_train5 =
-    
-    iphone_accel_train6 =
-    iphone_gyro_train6 =
-    
-    iphone_accel_train7 =
-    iphone_gyro_train7 =
-    
-    iphone_accel_test1 =
-    iphone_gyro_test1 =
-    
-    iphone_accel_test2 =
-    iphone_gyro_test2 =
-    
-    iphone_accel_test3 =
-    iphone_gyro_test3 =
-    
-    iwatch_accel_train1 =
-    iwatch_gyro_train1 =
-    
-    iwatch_gyro_train2 =
-    iwatch_accel_train2 =
-    
-    iwatch_accel_train3 =
-    iwatch_gyro_train3 =
-    
-    iwatch_accel_train4 =
-    iwatch_gyro_train4 =
-    
-    iwatch_accel_train5 =
-    iwatch_gyro_train5 =
-    
-    iwatch_accel_train6 =
-    iwatch_gyro_train6 =
-    
-    iwatch_accel_train7 =
-    iwatch_gyro_train7 =
-     
-    iwatch_accel_test1 = 
-    iwatch_gyro_test1 =
-    
-    iwatch_accel_test2 =
-    iwatch_gyro_test2 =
-    
-    iwatch_accel_test3 =
-    iwatch_gyro_test3 = 
-    
-    iphone_accel_filtered_train =[[None] * 3] * 7 # inner list: x, y, z outer list: train #
+    # parse in LPF cutoff frequencies
+    train_data = get_data_directory('train')
+    test_data = get_data_directory('test')
+    iphone_train_freq = (pd.read_csv(os.path.join(train_data, 'iphone_train_cutoff_freq.csv'), sep=',',header=0)).to_numpy()
+    watch_train_freq = (pd.read_csv(os.path.join(train_data, 'watch_train_cutoff_freq.csv'), sep=',', header=0)).to_numpy()
+    iphone_test_freq = (pd.read_csv(os.path.join(test_data, 'iphone_test_cutoff_freq.csv'), sep=',', header=0)).to_numpy()
+    watch_test_freq = (pd.read_csv(os.path.join(test_data, 'watch_test_cutoff_freq.csv'), sep=',', header=0)).to_numpy()
+
+    # remove extra column with accel/gyro names
+    iphone_train_freq = iphone_train_freq[:, 0:7]
+    watch_train_freq = watch_train_freq[:, 0:7]
+    iphone_test_freq = iphone_test_freq[:, 0:3]
+    watch_test_freq = watch_test_freq[:, 0:3]
+
+    # send LPF'd data into list of numpy arrays
+    iphone_accel_filtered_train = [[None] * 3] * 7  # inner list: x, y, z outer list: train #
     iphone_gyro_filtered_train = [[None] * 3] * 7
-    iwatch_accel_filtered_train =[[None] * 3] * 7
+    iwatch_accel_filtered_train = [[None] * 3] * 7
     iwatch_gyro_filtered_train = [[None] * 3] * 7
-    
-    iphone_accel_filtered_test =[[None] * 3] * 3 # inner list: x, y, z outer list: test #
+
+    iphone_accel_filtered_test = [[None] * 3] * 3  # inner list: x, y, z outer list: test #
     iphone_gyro_filtered_test = [[None] * 3] * 3
     iwatch_accel_filtered_test = [[None] * 3] * 3
-    iwatch_gyro_filtered_tes = [[None] * 3] * 3
-    
+    iwatch_gyro_filtered_test = [[None] * 3] * 3
+
     # Low Pass filter accel and gyro data: Train
     for i in range(7):
-        iphone_train_accel_sensor = "iPhoneAccelTrain" + str(i)
-        iphone_train_gyro_sensor = "iPhoneGyroTrain" + str(i)
-        iwatch_train_accel_sensor = "iWatchAccelTrain" + str(i)
-        iwatch_train_gyro_sensor = "iWatchGyroTrain" + str(i)
-        
-        iphone_accel_filtered_train[i][0], iphone_accel_filtered_train[i][1], iphone_accel_filtered_train[i][2] = low_pass_filter(iphone_accel_train[i], iphone_train_accel_sensor, iphone_accel_train_freq[i]) 
-        iphone_gyro_filtered_train[i][0], iphone_gyro_filtered_train[i][1], iphone_gyro_filtered_train[i][2] = low_pass_filter(iphone_gyro_train[i], iphone_train_gyro_sensor,  iphone_gyro_train_freq[i])
-        iwatch_accel_filtered_train[i][0], iwatch_accel_filtered_train[i][1], iwatch_accel_filtered_train[i][2] = low_pass_filter(iphone_accel_train[i], iwatch_train_accel_sensor, iwatch_accel_train_freq[i]) 
-        iwatch_gyro_filtered_train[i][0], iwatch_gyro_filtered_train[i][1], iwatch_gyro_filtered_train[i][2] = low_pass_filter(iphone_gyro_train[i], iwatch_train_gyro_sensor,  iwatch_gyro_train_freq[i])
-    
+        iphone_train_accel_sensor = "iPhoneAccelTrain" + str(i+1)
+        iphone_train_gyro_sensor = "iPhoneGyroTrain" + str(i+1)
+        iwatch_train_accel_sensor = "iWatchAccelTrain" + str(i+1)
+        iwatch_train_gyro_sensor = "iWatchGyroTrain" + str(i+1)
+        iphone_accel_filtered_train[i][0], iphone_accel_filtered_train[i][1], iphone_accel_filtered_train[i][2] = low_pass_filter(iphone_accel_train[i], iphone_train_accel_sensor, iphone_train_freq[0][i])
+        iphone_gyro_filtered_train[i][0], iphone_gyro_filtered_train[i][1], iphone_gyro_filtered_train[i][2] = low_pass_filter(iphone_gyro_train[i], iphone_train_gyro_sensor, iphone_train_freq[1][i])
+        iwatch_accel_filtered_train[i][0], iwatch_accel_filtered_train[i][1], iwatch_accel_filtered_train[i][2] = low_pass_filter(iphone_accel_train[i], iwatch_train_accel_sensor, watch_train_freq[0][i])
+        iwatch_gyro_filtered_train[i][0], iwatch_gyro_filtered_train[i][1], iwatch_gyro_filtered_train[i][2] = low_pass_filter(iphone_gyro_train[i], iwatch_train_gyro_sensor, watch_train_freq[1][i])
+
+
     # Low Pass filter accel and gyro data: Test
     for i in range(3):
-        iphone_test_accel_sensor = "iPhoneAccelTest" + str(i)
-        iphone_test_gyro_sensor = "iPhoneGyroTest" + str(i)
-        iwatch_test_accel_sensor = "iWatchAccelTest" + str(i)
-        iwatch_test_gyro_sensor = "iWatchGyroTest" + str(i)
-        
-        iphone_accel_filtered_test[i][0], iphone_accel_filtered_test[i][1], iphone_accel_filtered_test[i][2] = low_pass_filter(iphone_accel_test[i], iphone_test_accel_sensor, iphone_accel_test_freq[i]) 
-        iphone_gyro_filtered_test[i][0], iphone_gyro_filtered_test[i][1], iphone_gyro_filtered_test[i][2] = low_pass_filter(iphone_gyro_test[i], iphone_test_gyro_sensor,  iphone_gyro_test_freq[i])
-        iwatch_accel_filtered_test[i][0], iwatch_accel_filtered_test[i][1], iwatch_accel_filtered_test[i][2] = low_pass_filter(iphone_accel_test[i], iwatch_test_accel_sensor, iwatch_accel_test_freq[i]) 
-        iwatch_gyro_filtered_test[i][0], iwatch_gyro_filtered_test[i][1], iwatch_gyro_filtered_test[i][2] = low_pass_filter(iphone_gyro_test[i], iwatch_test_gyro_sensor,  iwatch_gyro_test_freq[i])
-    
+        iphone_test_accel_sensor = "iPhoneAccelTest" + str(i+1)
+        iphone_test_gyro_sensor = "iPhoneGyroTest" + str(i+1)
+        iwatch_test_accel_sensor = "iWatchAccelTest" + str(i+1)
+        iwatch_test_gyro_sensor = "iWatchGyroTest" + str(i+1)
+
+        iphone_accel_filtered_test[i][0], iphone_accel_filtered_test[i][1], iphone_accel_filtered_test[i][2] = low_pass_filter(iphone_accel_test[i], iphone_test_accel_sensor, iphone_test_freq[0][i])
+        iphone_gyro_filtered_test[i][0], iphone_gyro_filtered_test[i][1], iphone_gyro_filtered_test[i][2] = low_pass_filter(iphone_gyro_test[i], iphone_test_gyro_sensor, iphone_test_freq[1][i])
+        iwatch_accel_filtered_test[i][0], iwatch_accel_filtered_test[i][1], iwatch_accel_filtered_test[i][2] = low_pass_filter(iphone_accel_test[i], iwatch_test_accel_sensor, watch_test_freq[0][i])
+        iwatch_gyro_filtered_test[i][0], iwatch_gyro_filtered_test[i][1], iwatch_gyro_filtered_test[i][2] = low_pass_filter(iphone_gyro_test[i], iwatch_test_gyro_sensor, watch_test_freq[1][i])
+
     # Coordinate System Alignment
     iphone_accel_horizontal_train = [None] * 7
     iphone_accel_vertical_train = [None] * 7
@@ -560,7 +478,7 @@ def main():
     iwatch_accel_vertical_train = [None] * 7
     iwatch_gyro_vertical_train = [None] * 7
     iwatch_gyro_horizontal_train = [None] * 7
-    
+
     iphone_accel_horizontal_test = [None] * 3
     iphone_accel_vertical_test = [None] * 3
     iphone_gyro_vertical_test = [None] * 3
@@ -569,40 +487,48 @@ def main():
     iwatch_accel_vertical_test = [None] * 3
     iwatch_gyro_vertical_test = [None] * 3
     iwatch_gyro_horizontal_test = [None] * 3
-    
-    for i in range(7): # Coordinate System Alignment: Training Data
-        iphone_accel_horizontal_train[i], iphone_accel_vertical_train[i] = coordinate_sys_alignment(iphone_accel_filtered_train[i][0], iphone_accel_filtered_train[i][1], iphone_accel_filtered_train[i][2])
-        iphone_gyro_horizontal_train[i], iphone_gyro_vertical_train[i] = coordinate_sys_alignment(iphone_gyro_filtered_train[i][0], iphone_gyro_filtered_train[i][1], iphone_gyro_filtered_train[i][2])
-        iwatch_accel_horizontal_train[i], iwatch_accel_vertical_train[i] = coordinate_sys_alignment(iwatch_accel_filtered_train[i][0], iwatch_accel_filtered_train[i][1], iwatch_accel_filtered_train[i][2])
-        iwatch_gyro_horizontal_train[i], iwatch_gyro_vertical_train[i] = coordinate_sys_alignment(iwatch_gyro_filtered_train[i][0], iwatch_gyro_filtered_train[i][1], iwatch_gyro_filtered_train[i][2])
-        
-    for i in range(3): # Coordinate System Alignment: Test Data
-        iphone_accel_horizontal_test[i], iphone_accel_vertical_test[i] = coordinate_sys_alignment(iphone_accel_filtered_test[i][0], iphone_accel_filtered_test[i][1], iphone_accel_filtered_test[i][2])
-        iphone_gyro_horizontal_test[i], iphone_gyro_vertical_test[i] = coordinate_sys_alignment(iphone_gyro_filtered_test[i][0], iphone_gyro_filtered_test[i][1], iphone_gyro_filtered_test[i][2])
-        iwatch_accel_horizontal_test[i], iwatch_accel_vertical_test[i] = coordinate_sys_alignment(iwatch_accel_filtered_test[i][0], iwatch_accel_filtered_test[i][1], iwatch_accel_filtered_test[i][2])
-        iwatch_gyro_horizontal_test[i], iwatch_gyro_vertical_test[i] = coordinate_sys_alignment(iwatch_gyro_filtered_test[i][0], iwatch_gyro_filtered_test[i][1], iwatch_gyro_filtered_test[i][2])
-        
+
+    for i in range(7):  # Coordinate System Alignment: Training Data
+        iphone_accel_horizontal_train[i], iphone_accel_vertical_train[i] = coordinate_sys_alignment(
+            iphone_accel_filtered_train[i][0], iphone_accel_filtered_train[i][1], iphone_accel_filtered_train[i][2])
+        iphone_gyro_horizontal_train[i], iphone_gyro_vertical_train[i] = coordinate_sys_alignment(
+            iphone_gyro_filtered_train[i][0], iphone_gyro_filtered_train[i][1], iphone_gyro_filtered_train[i][2])
+        iwatch_accel_horizontal_train[i], iwatch_accel_vertical_train[i] = coordinate_sys_alignment(
+            iwatch_accel_filtered_train[i][0], iwatch_accel_filtered_train[i][1], iwatch_accel_filtered_train[i][2])
+        iwatch_gyro_horizontal_train[i], iwatch_gyro_vertical_train[i] = coordinate_sys_alignment(
+            iwatch_gyro_filtered_train[i][0], iwatch_gyro_filtered_train[i][1], iwatch_gyro_filtered_train[i][2])
+
+    for i in range(3):  # Coordinate System Alignment: Test Data
+        iphone_accel_horizontal_test[i], iphone_accel_vertical_test[i] = coordinate_sys_alignment(
+            iphone_accel_filtered_test[i][0], iphone_accel_filtered_test[i][1], iphone_accel_filtered_test[i][2])
+        iphone_gyro_horizontal_test[i], iphone_gyro_vertical_test[i] = coordinate_sys_alignment(
+            iphone_gyro_filtered_test[i][0], iphone_gyro_filtered_test[i][1], iphone_gyro_filtered_test[i][2])
+        iwatch_accel_horizontal_test[i], iwatch_accel_vertical_test[i] = coordinate_sys_alignment(
+            iwatch_accel_filtered_test[i][0], iwatch_accel_filtered_test[i][1], iwatch_accel_filtered_test[i][2])
+        iwatch_gyro_horizontal_test[i], iwatch_gyro_vertical_test[i] = coordinate_sys_alignment(
+            iwatch_gyro_filtered_test[i][0], iwatch_gyro_filtered_test[i][1], iwatch_gyro_filtered_test[i][2])
+
     # Combine training data into one numpy array
     iphone_accel_h_train = np.empty([iphone_accel_horizontal_train[0].shape[0], 3])
     iphone_accel_v_train = np.empty([iphone_accel_vertical_train[0].shape[1], 3])
     iphone_gyro_h_train = np.empty([iphone_accel_horizontal_train[0].shape[0], 3])
     iphone_gyro_v_train = np.empty([iphone_accel_vertical_train[0].shape[1], 3])
-    
+
     iwatch_accel_h_train = np.empty([iwatch_accel_horizontal_train[0].shape[0], 3])
     iwatch_accel_v_train = np.empty([iwatch_accel_vertical_train[0].shape[1], 3])
     iwatch_gyro_h_train = np.empty([iwatch_accel_horizontal_train[0].shape[0], 3])
     iwatch_gyro_v_train = np.empty([iwatch_accel_vertical_train[0].shape[1], 3])
-    
+
     iphone_accel_h_test = np.empty([iphone_accel_horizontal_test[0].shape[0], 3])
     iphone_accel_v_test = np.empty([iphone_accel_vertical_test[0].shape[1], 3])
     iphone_gyro_h_test = np.empty([iphone_accel_horizontal_test[0].shape[0], 3])
     iphone_gyro_v_test = np.empty([iphone_accel_vertical_test[0].shape[1], 3])
-  
+
     iwatch_accel_h_test = np.empty([iwatch_accel_horizontal_test[0].shape[0], 3])
     iwatch_accel_v_test = np.empty([iwatch_accel_vertical_test[0].shape[1], 3])
     iwatch_gyro_h_test = np.empty([iwatch_accel_horizontal_test[0].shape[0], 3])
     iwatch_gyro_v_test = np.empty([iwatch_accel_vertical_test[0].shape[1], 3])
-    
+
     for i in reversed(range(7)):
         iphone_accel_h_train.vstack(iphone_accel_horizontal_train[i])
         iphone_accel_v_train.vstack(iphone_accel_vertical_train[i])
@@ -612,40 +538,26 @@ def main():
         iwatch_gyro_h_train.vstack(iwatch_gyro_vertical_train[i])
         iwatch_gyro_h_train.vstack(iwatch_gyro_horizontal_train[i])
         iphone_gyro_h_train.vstack(iphone_gyro_vertical_train[i])
-        
-    for i in reversed(range(3)): # combine all 
+
+    for i in reversed(range(3)):  # combine all
         iphone_accel_h_test.vstack(iphone_accel_horizontal_test[i])
         iphone_accel_v_test.vstack(iphone_accel_vertical_test[i])
-        iphone_gyro_h_test.vstack(iphone_gyro_horizonal_test[i])
+        iphone_gyro_h_test.vstack(iphone_gyro_horizontal_test[i])
         iphone_gyro_v_test.vstack(iphone_gyro_vertical_test[i])
-        
+
         iwatch_accel_h_test.vstack(iwatch_accel_horizontal_test[i])
         iwatch_accel_v_test.vstack(iwatch_accel_vertical_test[i])
-        iwatch_gyro_h_test.vstack(iwatch_gyro_horizonal_test[i])
+        iwatch_gyro_h_test.vstack(iwatch_gyro_horizontal_test[i])
         iwatch_gyro_v_test.vstack(iwatch_gyro_vertical_test[i])
-        
+
     # TODO: combine arrays above with velocity column
-    deep_neural_network(iphone_accel_h_train, iphone_accel_v_train, iphone_gyro_h_train, iphone_gyro_v_train, velocity_train, iphone_accel_h_test, iphone_accel_v_test, iphone_gyro_h_test, iphone_gyro_v_test, velocity_test)
-    deep_neural_network(iwatch_accel_h_train, iwatch_accel_v_train, iwatch_gyro_h_train, iwatch_gyro_v_train, velocity_train, iwatch_accel_h_test, iwatch_accel_v_test, iwatch_gyro_h_test, iwatch_gyro_v_test, velocity_test)
-            '''
-
-    # Low Pass filter accel and gyro data
     '''
-    iphone_accel_x_filtered, iphone_accel_y_filtered, iphone_accel_z_filtered = low_pass_filter(iphone_accel, "iPhoneAccelerometer", 8) # TODO: find a way to just calculate cutoff frequency
-    iphone_gyro_x_filtered, iphone_gyro_y_filtered, iphone_gyro_z_filtered = low_pass_filter(iphone_gyro, "iPhoneGyroscope", 10)
-    iwatch_accel_x_filtered, iwatch_accel_y_filtered, iwatch_accel_z_filtered = low_pass_filter(iwatch_accel, "iWatchAccelerometer", 6)
-    iwatch_gyro_x_filtered, iwatch_gyro_y_filtered, iwatch_gyro_z_filtered = low_pass_filter(iwatch_gyro, "iWatchGyroscope", 14)
-
-    iphone_accel_horizonal, iphone_accel_vertical = coordinate_sys_alignment(iphone_accel_x_filtered, iphone_accel_y_filtered, iphone_accel_z_filtered)
-    iphone_gyro_horizonal, iphone_gyro_vertical = coordinate_sys_alignment(iphone_gyro_x_filtered, iphone_gyro_y_filtered, iphone_gyro_z_filtered)
-    iwatch_accel_horizonal, iwatch_accel_vertical = coordinate_sys_alignment(iwatch_accel_x_filtered, iwatch_accel_y_filtered, iwatch_accel_z_filtered)
-    iwatch_gyro_horizonal, iwatch_gyro_vertical = coordinate_sys_alignment(iwatch_gyro_x_filtered, iwatch_gyro_y_filtered, iwatch_gyro_z_filtered)
-
-    user_velocity_iphone = deep_neural_network(iphone_accel_horizonal, iphone_accel_vertical, iphone_gyro_horizonal, iphone_gyro_vertical)
-    user_velocity_iwatch = deep_neural_network(iwatch_accel_horizonal, iwatch_accel_vertical, iwatch_gyro_horizonal, iwatch_gyro_vertical)
-    final_velocity = (user_velocity_iphone + user_velocity_iwatch) / 2
-    print("User Velocity Estimation: " + final_velocity)'''
-
+    deep_neural_network(iphone_accel_h_train, iphone_accel_v_train, iphone_gyro_h_train, iphone_gyro_v_train,
+                        velocity_train, iphone_accel_h_test, iphone_accel_v_test, iphone_gyro_h_test,
+                        iphone_gyro_v_test, velocity_test)
+    deep_neural_network(iwatch_accel_h_train, iwatch_accel_v_train, iwatch_gyro_h_train, iwatch_gyro_v_train,
+                        velocity_train, iwatch_accel_h_test, iwatch_accel_v_test, iwatch_gyro_h_test,
+                        iwatch_gyro_v_test, velocity_test)'''
     print("Finished.")
 
 if __name__ == "__main__": 
