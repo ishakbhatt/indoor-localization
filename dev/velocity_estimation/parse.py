@@ -185,7 +185,7 @@ def parse_rssi_data(m, d, y, set_num, threshold):
     for v_row in vel_arr:
         for r_row in rssi_raw_data:
             if((r_row[0] >= v_row[0] - threshold) and (r_row[0] <= v_row[0] + threshold)):
-                final_data = np.concatenate((v_row, r_row[1:4]), axis=0)
+                final_data = np.concatenate((v_row, r_row[1:5]), axis=0)
                 final_data = final_data.tolist()
                 rssi_data.append(final_data)
                 break
