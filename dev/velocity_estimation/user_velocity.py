@@ -417,6 +417,16 @@ def main():
         power_spectral_density(iwatch_accel_train[i], iwatch_train_accel_sensor)
         power_spectral_density(iwatch_gyro_train[i], iwatch_train_gyro_sensor)
 
+    for i in range(3):
+        iphone_test_accel_sensor = "iPhoneAccelTest" + str(i)
+        iphone_test_gyro_sensor = "iPhoneGyroTest" + str(i)
+        iwatch_test_accel_sensor = "iWatchAccelTest" + str(i)
+        iwatch_test_gyro_sensor = "iWatchGyroTest" + str(i)
+        power_spectral_density(iphone_accel_test[i], iphone_test_accel_sensor)
+        power_spectral_density(iphone_gyro_test[i], iphone_test_gyro_sensor)
+        power_spectral_density(iwatch_accel_test[i], iwatch_test_accel_sensor)
+        power_spectral_density(iwatch_gyro_test[i], iwatch_test_gyro_sensor)
+
     print("Success!")
     # LPF cutoff frequencies:
     '''
