@@ -338,8 +338,7 @@ def make_matrices():
     """
     Format IMU CSV data into Numpy matrices.
     """
-    # data_dir = get_data_directory('initial')
-    data_dir = data_dir = '/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/data/initial/'
+    data_dir = get_data_directory('initial')
 
     print("Generating iPhone Array...")
     iphone_csv_array = genfromtxt_with_unix_convert(os.path.join(data_dir, 'iphoneIMU.csv'), True)
