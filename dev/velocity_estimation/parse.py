@@ -49,6 +49,8 @@ def parse_dcnn_data(set_type, device, set_num):
     else:
         vel_cols = [4, 5]
     vel_arr = uv.genfromtxt_with_unix_convert(os.path.join(data_dir, set_type + '_vel' + str(set_num) + '.csv'), True)
+    if(set_type == 'train' and set_num == 2):
+        vel_arr = vel_arr[0:15, :]
     vel_arr = uv.new_gen_sensor_array(vel_cols, vel_arr)
     vel_arr = vel_arr.astype('float64')
 
