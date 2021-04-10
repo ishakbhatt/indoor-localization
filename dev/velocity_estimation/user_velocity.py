@@ -57,6 +57,38 @@ def construct_images(accel_horizontal_mag, accel_vertical_mag, gyro_horizontal_m
     images.append(combined[start:start+(combined.shape[0] % image_num_rows)])
     return images
 
+def concat_train_imu(array_list):
+    '''concatenates training arrays'''
+    sub_array1 = np.concatenate((array_list[0], array_list[1]), axis=0)
+    sub_array2 = np.concatenate((sub_array1, array_list[2]), axis=0)
+    sub_array3 = np.concatenate((sub_array2, array_list[3]), axis=0)
+    sub_array4 = np.concatenate((sub_array3, array_list[4]), axis=0)
+    sub_array5 = np.concatenate((sub_array4, array_list[5]), axis=0)
+    final = np.concatenate((sub_array5, array_list[6]), axis=0)
+    return final
+
+def concat_test_imu(array_list):
+    '''concatenates testing IMU arrays'''
+    sub_array1 = np.concatenate((array_list[0], array_list[1]), axis=0)
+    final = np.concatenate((sub_array1, array_list[2]), axis=0)
+    return final
+
+def concat_train_vel(array_list):
+    '''concatenates training velocity arrays'''
+    sub_array = np.concatenate((array_list[0][:, 4], array_list[1][:, 4]), axis=0)
+    sub_array2 = np.concatenate((sub_array, array_list[2][:, 4]), axis=0)
+    sub_array3 = np.concatenate((sub_array2, array_list[3][:, 4]), axis=0)
+    sub_array4 = np.concatenate((sub_array3, array_list[4][:, 4]), axis=0)
+    sub_array5 = np.concatenate((sub_array4, array_list[5][:, 4]), axis=0)
+    final = np.concatenate((sub_array5, array_list[6][:, 4]), axis=0)
+    return final
+
+def concat_test_vel(array_list):
+    '''concatenates testing IMU arrays'''
+    sub_array1 = np.concatenate((array_list[0][:, 4], array_list[1][:, 4]), axis=0)
+    final = np.concatenate((sub_array1, array_list[2][:, 4]), axis=0)
+    return final
+
 def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal_gyro_train, vertical_gyro_train, velocity_train,
                         horizontal_accel_test, vertical_accel_test, horizontal_gyro_test, vertical_gyro_test, velocity_test): # TODO: update with train and test
     '''
@@ -529,35 +561,39 @@ def main():
     iwatch_gyro_h_test = np.empty([iwatch_accel_horizontal_test[0].shape[0], 3])
     iwatch_gyro_v_test = np.empty([iwatch_accel_vertical_test[0].shape[1], 3])
 
-    for i in reversed(range(7)):
-        iphone_accel_h_train.vstack(iphone_accel_horizontal_train[i])
-        iphone_accel_v_train.vstack(iphone_accel_vertical_train[i])
-        iphone_gyro_h_train.vstack(iphone_gyro_horizontal_train[i])
-        iwatch_accel_h_train.vstack(iwatch_accel_horizontal_train[i])
-        iwatch_accel_v_train.vstack(iwatch_accel_vertical_train[i])
-        iwatch_gyro_h_train.vstack(iwatch_gyro_vertical_train[i])
-        iwatch_gyro_h_train.vstack(iwatch_gyro_horizontal_train[i])
-        iphone_gyro_h_train.vstack(iphone_gyro_vertical_train[i])
+    iphone_accel_h_train = concat_train_imu(iphone_accel_horizontal_train)
+    iphone_accel_v_train = concat_train_imu(iphone_accel_vertical_train)
+    iphone_gyro_h_train = concat_train_imu(iphone_gyro_horizontal_train)
+    iphone_gyro_v_train = concat_train_imu(iphone_gyro_vertical_train)
+    iwatch_accel_h_train = concat_train_imu(iwatch_accel_horizontal_train)
+    iwatch_accel_v_train = concat_train_imu(iwatch_accel_vertical_train)
+    iwatch_gyro_h_train = concat_train_imu(iwatch_gyro_horizontal_train)
+    iwatch_gyro_v_train = concat_train_imu(iwatch_gyro_vertical_train)
 
-    for i in reversed(range(3)):  # combine all
-        iphone_accel_h_test.vstack(iphone_accel_horizontal_test[i])
-        iphone_accel_v_test.vstack(iphone_accel_vertical_test[i])
-        iphone_gyro_h_test.vstack(iphone_gyro_horizontal_test[i])
-        iphone_gyro_v_test.vstack(iphone_gyro_vertical_test[i])
+    iphone_accel_h_test = concat_test_imu(iphone_accel_horizontal_test)
+    iphone_accel_v_test = concat_test_imu(iphone_accel_vertical_test)
+    iphone_gyro_h_test = concat_test_imu(iphone_gyro_horizontal_test)
+    iphone_gyro_v_test = concat_test_imu(iphone_gyro_vertical_test)
+    iwatch_accel_h_test = concat_test_imu(iwatch_accel_horizontal_test)
+    iwatch_accel_v_test = concat_test_imu(iwatch_accel_vertical_test)
+    iwatch_gyro_h_test = concat_test_imu(iwatch_gyro_horizontal_test)
+    iwatch_gyro_v_test = concat_test_imu(iwatch_gyro_vertical_test)
 
-        iwatch_accel_h_test.vstack(iwatch_accel_horizontal_test[i])
-        iwatch_accel_v_test.vstack(iwatch_accel_vertical_test[i])
-        iwatch_gyro_h_test.vstack(iwatch_gyro_horizontal_test[i])
-        iwatch_gyro_v_test.vstack(iwatch_gyro_vertical_test[i])
+    iphone_velocity_train = concat_train_vel(iphone_accel_train)
+    iphone_velocity_test = concat_test_vel(iphone_accel_test)
+    iwatch_velocity_train = concat_train_vel(iwatch_accel_train)
+    iwatch_velocity_test = concat_test_vel(iwatch_accel_train)
 
-    # TODO: combine arrays above with velocity column
-    '''
+    # velocities
+
+
     deep_neural_network(iphone_accel_h_train, iphone_accel_v_train, iphone_gyro_h_train, iphone_gyro_v_train,
-                        velocity_train, iphone_accel_h_test, iphone_accel_v_test, iphone_gyro_h_test,
-                        iphone_gyro_v_test, velocity_test)
-    deep_neural_network(iwatch_accel_h_train, iwatch_accel_v_train, iwatch_gyro_h_train, iwatch_gyro_v_train,
-                        velocity_train, iwatch_accel_h_test, iwatch_accel_v_test, iwatch_gyro_h_test,
-                        iwatch_gyro_v_test, velocity_test)'''
+                        iphone_velocity_train, iphone_accel_h_test, iphone_accel_v_test, iphone_gyro_h_test,
+                        iphone_gyro_v_test, iphone_velocity_test)
+
+    '''deep_neural_network(iwatch_accel_h_train, iwatch_accel_v_train, iwatch_gyro_h_train, iwatch_gyro_v_train,
+                        iwatch_velocity_train, iwatch_accel_h_test, iwatch_accel_v_test, iwatch_gyro_h_test,
+                        iwatch_gyro_v_test, iwatch_velocity_test)'''
     print("Finished.")
 
 if __name__ == "__main__": 
