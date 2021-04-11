@@ -32,7 +32,7 @@ def magnitude(horizontal, vertical):
     Take magnitude of each row of horizontal and vertical components.
     '''
     horizontal_magnitude = np.empty([horizontal.shape[0], 1])
-    vertical_magnitude = np.empty([vertical.shape[1], 1])
+    vertical_magnitude = np.empty([vertical.shape[0], 1])
     for i in range(horizontal.shape[0]):
         horizontal_magnitude[i] = np.linalg.norm(horizontal[i])
         vertical_magnitude[i] = np.linalg.norm(vertical[i])
@@ -45,11 +45,13 @@ def construct_images(accel_horizontal_mag, accel_vertical_mag, gyro_horizontal_m
     images = []
     image_num_rows = 45
     # construct combined image
-    combined = np.hstack(accel_horizontal_mag, accel_vertical_mag, gyro_horizontal_mag, gyro_vertical_mag)
+    combined2 = np.concatenate((accel_horizontal_mag, accel_vertical_mag), axis=1)
+    combined1 = np.concatenate((gyro_horizontal_mag, gyro_vertical_mag), axis=1)
+    combined = np.concatenate((combined2, combined1), axis=1)
 
     num_equal_images = (combined.shape[0]-(combined.shape[0] % image_num_rows))/image_num_rows
     start = 0
-    for i in range(num_equal_images):
+    for i in range(int(num_equal_images)):
         image = combined[start:start+image_num_rows, :]
         images.append(image)
         start = start + image_num_rows
@@ -107,8 +109,14 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     images_test = construct_images(accel_horizontal_mag_test, accel_vertical_mag_test, gyro_horizontal_mag_test, gyro_vertical_mag_test)
 
     # combined TODO: decide combined or constructed images
-    combined_train = np.hstack(accel_horizontal_mag_train, accel_vertical_mag_train, gyro_horizontal_mag_train, gyro_vertical_mag_train)
-    combined_test = np.hstack(accel_horizontal_mag_test, accel_vertical_mag_test, gyro_horizontal_mag_test, gyro_vertical_mag_test)
+    sub_array1_train = np.concatenate((accel_horizontal_mag_train, accel_vertical_mag_train), axis=1)
+    sub_array2_train = np.concatenate((gyro_horizontal_mag_train, accel_vertical_mag_train), axis=1)
+    combined_train = np.concatenate((sub_array1_train, sub_array2_train), axis=1)
+
+    sub_array1_test = np.concatenate((accel_horizontal_mag_test, accel_vertical_mag_test), axis=1)
+    sub_array2_test = np.concatenate((gyro_horizontal_mag_test, accel_vertical_mag_test), axis=1)
+    combined_test = np.concatenate((sub_array1_test, sub_array2_test), axis=1)
+
 
     ##################### BUILD THE MODEL #####################
 
