@@ -117,6 +117,7 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     sub_array2_test = np.concatenate((gyro_horizontal_mag_test, accel_vertical_mag_test), axis=1)
     combined_test = np.concatenate((sub_array1_test, sub_array2_test), axis=1)
 
+    # change input shape
 
     ##################### BUILD THE MODEL #####################
 
@@ -170,6 +171,8 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     model.compile(loss='mean_squared_error')
 
     # fit the model (Train) # TODO: tune epoch and batch_size
+    combined_train = combined_train.reshape(combined_train.shape[0], combined_train.shape[1], 1, 1)
+    # TODO: determine classes for vel train, epochs and batch size and regressor
     model.fit(combined_train, velocity_train, validation_data=(combined_train, velocity_train), epochs=1, batch_size=combined_train.shape[0])
 
     # Summary
