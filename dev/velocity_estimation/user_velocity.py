@@ -127,41 +127,37 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     model = keras.Sequential()
 
     # CASCADED LAYER 1
-    combined_train = combined_train.reshape(combined_train.shape[0], combined_train.shape[1] - 2, 2, 1)
-    model.add(keras.layers.Conv2D(filters=16, kernel_size=(2, 2)))
+    combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
+    model.add(keras.layers.Conv2D(filters=16, kernel_size=(2, 2), padding='same'))
     # batch normalization layer to lower sensitivity to network initialization
     model.add(keras.layers.BatchNormalization())
     # ReLU activation layer
     model.add(keras.layers.Activation('relu'))
     # Max Pooling layer
-    combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
-    model.add(keras.layers.MaxPooling2D(pool_size=(2, 2), input_shape=(combined_train.shape[0], 2, 2, 1), strides=(1, 1), padding='valid'),  dim_ordering="th")
+    model.add(keras.layers.MaxPooling2D(pool_size=(2, 2), input_shape=(combined_train.shape[0], 2, 2, 1), strides=(1, 1), padding='same'))
 
     # CASCADED LAYER 2
     combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
-    model.add(keras.layers.Conv2D(filters=32, kernel_size=(2, 2)))
+    model.add(keras.layers.Conv2D(filters=32, kernel_size=(2, 2), padding='same'))
     # batch normalization layer to lower sensitivity to network initialization
     model.add(keras.layers.BatchNormalization())
     # ReLU activation layer
     model.add(keras.layers.Activation('relu'))
     # Max Pooling layer
-    combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
-    model.add(keras.layers.MaxPooling2D(pool_size=(2, 2)))
+    model.add(keras.layers.MaxPooling2D(pool_size=(2, 2), input_shape=(combined_train.shape[0], 2, 2, 1), strides=(1, 1), padding='same'))
 
     # CASCADED LAYER 3
     combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
-    model.add(keras.layers.Conv2D(filters=48, kernel_size=(2, 2)))
+    model.add(keras.layers.Conv2D(filters=48, kernel_size=(2, 2), padding='same'))
     # batch normalization layer to lower sensitivity to network initialization
     model.add(keras.layers.BatchNormalization())
     # ReLU activation layer
     model.add(keras.layers.Activation('relu'))
     # Max Pooling layer
-    combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
-    model.add(keras.layers.MaxPooling2D(pool_size=(2, 2)))
+    model.add(keras.layers.MaxPooling2D(pool_size=(2, 2), input_shape=(combined_train.shape[0], 2, 2, 1), strides=(1, 1), padding='same'))
 
     # CASCADED LAYER 4 (Maxpooling excluded in last group)
-    combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
-    model.add(keras.layers.Conv2D(filters=64, kernel_size=(2, 2)))
+    model.add(keras.layers.Conv2D(filters=64, kernel_size=(2, 2), padding='same'))
     # batch normalization layer to lower sensitivity to network initialization
     model.add(keras.layers.BatchNormalization())
     # ReLU activation layer
@@ -528,12 +524,6 @@ def main():
         temp_list = []
         temp_list.extend([x, y, z])
         iwatch_gyro_filtered_train.append(temp_list)
-
-        #iphone_accel_filtered_train[i][0], iphone_accel_filtered_train[i][1], iphone_accel_filtered_train[i][2] = low_pass_filter(iphone_accel_train[i], iphone_train_accel_sensor, iphone_train_freq[0][i])
-        #iphone_gyro_filtered_train[i][0], iphone_gyro_filtered_train[i][1], iphone_gyro_filtered_train[i][2] = low_pass_filter(iphone_gyro_train[i], iphone_train_gyro_sensor, iphone_train_freq[1][i])
-        #iwatch_accel_filtered_train[i][0], iwatch_accel_filtered_train[i][1], iwatch_accel_filtered_train[i][2] = low_pass_filter(iwatch_accel_train[i], iwatch_train_accel_sensor, watch_train_freq[0][i])
-        #iwatch_gyro_filtered_train[i][0], iwatch_gyro_filtered_train[i][1], iwatch_gyro_filtered_train[i][2] = low_pass_filter(iwatch_gyro_train[i], iwatch_train_gyro_sensor, watch_train_freq[1][i])
-
 
     # Low Pass filter accel and gyro data: Test
     for i in range(3):
