@@ -5,6 +5,8 @@ import numpy as np
 import itertools
 import user_velocity as uv
 from datetime import datetime, timezone
+from matricies import R
+import scipy.integrate as integrate
 import pandas as pd
 
 def parse_dcnn_data(set_type, device, set_num):
@@ -118,6 +120,125 @@ def parse_dcnn_data(set_type, device, set_num):
 
     return accel_data, gyro_data
 
+def parse_dcnn_data_for_pos_est(set_type, device, set_num):
+    """
+
+    Returns 2 n x 5 numpy arrays containing data for the 
+    specified data set. 
+    
+    accel array columns:
+    - unix timestamp
+    - accel x
+    - accel y
+    - accel z
+    - velocity
+
+    gyro array columns:
+    - unix timestamp
+    - gyro x
+    - gyro y
+    - gyro z
+    - velocity
+
+    """
+    if(not ((set_type == 'train') or (set_type == 'test'))):
+        print("Incorrect set type parameter. Please input 'train' or 'test' set type.")
+        sys.exit()
+    
+    if(not ((device == 'iphone') or (device == 'watch'))):
+        print("Incorrect device parameter. Please input 'iphone' or 'watch' device.")
+        sys.exit()
+
+    # init output arrays
+    gyro_data = [0,0,0,0,0,0,0]
+    accel_data = [0,0,0,0,0,0,0]
+    
+    # get correct directory
+    # data_dir = uv.get_data_directory(set_type)
+    data_dir = "/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/data/test/"
+
+    # get timestamp and vel
+    if(set_type == 'train'):
+        vel_cols = [2, 3]
+    else:
+        vel_cols = [4, 5, 0, 1]
+    vel_arr = uv.genfromtxt_with_unix_convert(os.path.join(data_dir, set_type + '_vel' + str(set_num) + '.csv'), True)
+    if(set_type == 'train' and set_num == 2):
+        vel_arr = vel_arr[0:15, :]
+    vel_arr = uv.new_gen_sensor_array(vel_cols, vel_arr)
+    vel_arr = vel_arr.astype('float64')
+
+    # get timestamps
+    if(device == 'iphone'):
+        imu_arr = uv.genfromtxt_with_unix_convert(os.path.join(data_dir, set_type + '_' + device + str(set_num) + '.csv'), True)
+        timestamps = uv.new_gen_sensor_array([0], imu_arr)
+        timestamps = timestamps.astype('float64') - 14400
+
+        # accel
+        accel_cols = [19, 20, 21]
+        accel = uv.new_gen_sensor_array(accel_cols, imu_arr) # extract cols
+        accel = accel.astype('float64') # convert all values to floats
+        accel = np.concatenate((timestamps, accel), axis=1)
+
+        # gyro
+        gyro_cols = [23, 24, 25]
+        gyro = uv.new_gen_sensor_array(gyro_cols, imu_arr)
+        gyro = gyro.astype('float64')
+        gyro = np.concatenate((timestamps, gyro), axis=1)
+
+    elif(device == 'watch'):
+        imu_arr = uv.genfromtxt_with_unix_convert(os.path.join(data_dir, set_type + '_' + device + str(set_num) + '.csv'), False)
+        timestamps = uv.new_gen_sensor_array([0], imu_arr)
+        timestamps = timestamps.astype('float64')
+
+        # accel
+        accel_cols = [11, 12, 13]
+        accel = uv.new_gen_sensor_array(accel_cols, imu_arr)
+        accel = accel.astype('float64')
+        accel = np.concatenate((timestamps, accel), axis=1)
+
+        # gyro
+        gyro_cols = [18, 19, 20]
+        gyro = uv.new_gen_sensor_array(gyro_cols, imu_arr)
+        gyro = gyro.astype('float64')
+        gyro = np.concatenate((timestamps, gyro), axis=1)
+
+    # init loop variables
+    curr_time = vel_arr[0][0]
+    next_time = vel_arr[1][0]
+    curr_vel = vel_arr[1][1]
+    curr_x = vel_arr[1][2]
+    curr_y = vel_arr[1][3]
+    vel_it = 1
+    
+    # match up velocities with imu data
+    for (a_row, g_row) in zip(accel, gyro):
+        if(a_row[0] < curr_time): # skip until we find the start
+            continue
+        elif(a_row[0] > curr_time):
+            if(a_row[0] >= next_time): # set a new curr_vel
+                a_row = np.append(a_row, curr_vel)
+                a_row = np.append(a_row, curr_x)
+                a_row = np.append(a_row, curr_y)
+                g_row = np.append(g_row, curr_vel)
+                g_row = np.append(g_row, curr_x)
+                g_row = np.append(g_row, curr_y)
+                accel_data = np.vstack((accel_data, a_row))
+                gyro_data = np.vstack((gyro_data, g_row))
+                vel_it += 1
+                if(vel_it == len(vel_arr)):
+                    break
+                curr_time = next_time
+                next_time = vel_arr[vel_it][0]
+                curr_vel = vel_arr[vel_it][1]
+                curr_x = vel_arr[vel_it][2]
+                curr_y = vel_arr[vel_it][3]
+
+    # remove initial row of zeros
+    accel_data = np.delete(accel_data,0,0)
+    gyro_data = np.delete(gyro_data,0,0)
+
+    return accel_data, gyro_data
 
 def parse_rssi_data(m, d, y, set_num, threshold):
     """
@@ -194,21 +315,49 @@ def parse_rssi_data(m, d, y, set_num, threshold):
 
 def main():
     # train
-    a1, g1 = parse_dcnn_data('train', 'iphone', 1)
-    a2, g2 = parse_dcnn_data('train', 'watch', 1) 
-    a1, g1 = parse_dcnn_data('train', 'iphone', 2)
-    a2, g2 = parse_dcnn_data('train', 'watch', 2) 
-    a1, g1 = parse_dcnn_data('train', 'iphone', 3)
-    a2, g2 = parse_dcnn_data('train', 'watch', 3) 
+    # a1, g1 = parse_dcnn_data('train', 'iphone', 1)
+    # a2, g2 = parse_dcnn_data('train', 'watch', 1) 
+    # a1, g1 = parse_dcnn_data('train', 'iphone', 2)
+    # a2, g2 = parse_dcnn_data('train', 'watch', 2) 
+    # a1, g1 = parse_dcnn_data('train', 'iphone', 3)
+    # a2, g2 = parse_dcnn_data('train', 'watch', 3) 
 
     # test
-    a1, g1 = parse_dcnn_data('test', 'iphone', 1)
-    a2, g2 = parse_dcnn_data('test', 'watch', 1) 
-    a1, g1 = parse_dcnn_data('test', 'iphone', 2)
-    a2, g2 = parse_dcnn_data('test', 'watch', 2) 
-    a1, g1 = parse_dcnn_data('test', 'iphone', 3)
-    a2, g2 = parse_dcnn_data('test', 'watch', 3) 
+    # a1, g1 = parse_dcnn_data('test', 'iphone', 1)
+    # a2, g2 = parse_dcnn_data('test', 'watch', 1) 
+    # a1, g1 = parse_dcnn_data('test', 'iphone', 2)
+    # a2, g2 = parse_dcnn_data('test', 'watch', 2) 
+    # a1, g1 = parse_dcnn_data('test', 'iphone', 3)
+    # a2, g2 = parse_dcnn_data('test', 'watch', 3) 
+
+    # Uncomment to parse dcnn_data
+    for i in range(1,4):
+        a1, g1 = parse_dcnn_data_for_pos_est('test', 'iphone', i)
+        df = pd.DataFrame(a1)
+        df.to_csv('test_accel_parsed' + str(i) + '.csv', index=False)
+        df = pd.DataFrame(g1)
+        df.to_csv('test_gyro_parsed' + str(i) + '.csv', index=False)
     
+    # TODO: un-hard-code
+    # perform integration on gyro data to get theta vector
+    theta_x = integrate.quad(lambda x: -0.005673864856362343, 0, 1.8828)
+    theta_y = integrate.quad(lambda x: -0.07081904262304306, 0, 1.8828)
+    theta_z = integrate.quad(lambda x: -0.07306914776563644, 0, 1.8828)
+
+    # find rotation matrix
+    Rot = R([theta_x[0], theta_y[0], theta_z[0]])
+
+    # apply rotation matrix to acceleration vector
+    accel = np.transpose(np.asarray([[0.115570068359375, -0.0550994873046875, -0.95159912109375]]))
+    rot_accel = np.dot(Rot,accel)
+
+    # perform integration to get position
+    x = integrate.quad(lambda x: rot_accel[0], 0, 1.8828)
+    y = integrate.quad(lambda x: rot_accel[1], 0, 1.8828)
+    z = integrate.quad(lambda x: rot_accel[2], 0, 1.8828)
+
+    print(x[0], y[0], z[0])
+
     # Uncomment to parse rssi_data into a csv file
     # threshold = 2 # seconds
     # for i in range(1,4):
