@@ -5,9 +5,11 @@ import numpy as np
 import itertools
 import user_velocity as uv
 from datetime import datetime, timezone
+import matplotlib.pyplot as plt
 from matricies import R
 import scipy.integrate as integrate
 import pandas as pd
+import math
 
 def parse_dcnn_data(set_type, device, set_num):
     """
@@ -313,6 +315,256 @@ def parse_rssi_data(m, d, y, set_num, threshold):
     print(len(rssi_data), "positions could be estimated from path", set_num)
     return rssi_data
 
+def results_no_rssi():
+    for path_num in range(1,4):
+        accel, gyro = parse_dcnn_data_for_pos_est('test', 'iphone', path_num)
+        thetas = []
+        velocities = []
+        positions = []
+        gt_positions = []
+        base_ts = accel[0][0]
+        # perform integration on gyro data to get theta vector
+        for i in range(0,len(accel) - 1):
+            print("-------- New Position Estimation --------")
+            b = accel[i + 1][0] - base_ts
+            theta_x = integrate.quad(lambda x: gyro[i][1], 0, b)[0]
+            theta_y = integrate.quad(lambda x: gyro[i][2], 0, b)[0]
+            theta_z = integrate.quad(lambda x: gyro[i][3], 0, b)[0]
+            thetas.append([theta_x, theta_y, theta_z])
+            print("Theta: ", theta_x, theta_y, theta_z)
+            
+            # find rotation matrix
+            Rot = R([theta_x, theta_y, theta_z])
+
+            # apply rotation matrix to acceleration vector
+            a_vec = np.transpose(np.asarray([[accel[i][1], accel[i][2], accel[i][3]]]))
+            rot_accel = np.dot(Rot,a_vec)
+            print("Rotated accel: ", rot_accel[0], rot_accel[1], rot_accel[2])
+
+            # perform integration to get velocity
+            x_vel = integrate.quad(lambda x: rot_accel[0], 0, b)[0]
+            y_vel = integrate.quad(lambda x: rot_accel[1], 0, b)[0]
+            z_vel = integrate.quad(lambda x: rot_accel[2], 0, b)[0]
+            velocities.append([x_vel, y_vel, z_vel])
+            print ("Velocity: ", x_vel, y_vel, z_vel)
+
+            # perform integration to get position
+            x = integrate.quad(lambda x: x_vel, 0, b)[0] + 8 # translate to initial position
+            y = integrate.quad(lambda x: y_vel, 0, b)[0] + 1 # translate to initial position 
+            z = integrate.quad(lambda x: z_vel, 0, b)[0]
+            positions.append([x, y, z])
+            print("Postion: ", x, y, z)
+            gt_x = accel[i][5]
+            gt_y = accel[i][6]
+            gt_positions.append([gt_x, gt_y])
+
+        time = np.linspace(0,len(positions),num=len(positions))
+        positions = np.asarray(positions)
+        xs, = plt.plot(time, positions[:,0], color='green', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        ys, = plt.plot(time, positions[:,1], color='red', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        plt.title("Positions vs. time")
+        plt.legend([xs, ys], ["x", "y"])
+        plt.savefig("/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/dev/velocity_estimation/imu_integration_results/pos_v_t_" + str(path_num) + ".png")
+        # # plt.legend("x", "y")
+
+        plt.figure()
+        velocities = np.asarray(velocities)
+        xvels, = plt.plot(time, velocities[:,0], color='green', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        yvels, = plt.plot(time, velocities[:,1], color='red', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        plt.title("Velocities vs. time")
+        plt.legend([xvels, yvels], ["x vel", "y vel"])
+        plt.savefig("/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/dev/velocity_estimation/imu_integration_results/vel_v_t_" + str(path_num) + ".png")
+        # plt.show()
+
+        plt.figure()
+        gt_positions = np.asarray(gt_positions)
+        x_m, = plt.plot(time, positions[:,0], color='green', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        x_gt, = plt.plot(time, gt_positions[:,0], color='red', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        plt.title("X values vs. time")
+        plt.legend([x_m, x_gt], ["measured", "gt"])
+        plt.savefig("/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/dev/velocity_estimation/imu_integration_results/x_gt_v_t_" + str(path_num) + ".png")
+        # plt.show()
+
+        plt.figure()
+        meas_pos, = plt.plot(positions[:,0], positions[:,1], color='green', marker='o', linestyle='dashed', linewidth=2)
+        gt_pos, = plt.plot(gt_positions[:,0], gt_positions[:,1], color='red', marker='o', linestyle='dashed', linewidth=2)
+        plt.title("Path Estimation")
+        plt.legend([meas_pos, gt_pos], ["estimation", "ground truth"])
+        plt.savefig("/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/dev/velocity_estimation/imu_integration_results/path_plot_outliers" + str(path_num) + ".png")
+
+        rsme_dist = []
+        rmse_x_vals = []
+        rmse_y_vals = []
+        positions_no_outliers = []
+        gt_positions_no_outliers = []
+        for (m_row, gt_row) in zip(positions, gt_positions):
+            x_err = rmse_x_vals.append(abs(m_row[0] - gt_row[0]))
+            y_err = rmse_y_vals.append(abs(m_row[1] - gt_row[1]))
+            dist_err = math.dist([m_row[0], m_row[1]], [gt_row[0], gt_row[1]])
+            rsme_dist.append(dist_err)
+            if(dist_err < 10):
+                positions_no_outliers.append(m_row)
+                gt_positions_no_outliers.append(gt_row)
+        
+        plt.figure()
+        positions_no_outliers = np.asarray(positions_no_outliers)
+        gt_positions_no_outliers = np.asarray(gt_positions_no_outliers)
+        meas_pos, = plt.plot(positions_no_outliers[:,0], positions_no_outliers[:,1], color='green', marker='o', linestyle='dashed', linewidth=2)
+        gt_pos, = plt.plot(gt_positions[:,0], gt_positions[:,1], color='red', marker='o', linestyle='dashed', linewidth=2)
+        plt.title("Path Estimation (No outliers)")
+        plt.legend([meas_pos, gt_pos], ["estimation", "ground truth"])
+        plt.savefig("/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/dev/velocity_estimation/imu_integration_results/path_plot_no_outliers" + str(path_num) + ".png")
+
+        plt.figure()
+        x_err, = plt.plot(time, rmse_x_vals, color='green', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        y_err, = plt.plot(time, rmse_y_vals, color='red', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        plt.title("Error vs. time, " + "Path " + str(path_num))
+        plt.legend([x_err, y_err], ["x", "y"])
+        plt.savefig("/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/dev/velocity_estimation/imu_integration_results/x_y_error_" + str(path_num) + ".png")
+        
+        plt.figure()
+        x_err, = plt.plot(time, rsme_dist, color='green', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        plt.title("Distance error vs. time, " + "Path " + str(path_num))
+        plt.savefig("/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/dev/velocity_estimation/imu_integration_results/dist_error_" + str(path_num) + ".png")
+        
+        #plt.show()
+        input("Press enter for next set of graphs")
+
+def results_with_rssi():
+    for path_num in range(1,4):
+
+        # read in rssi values
+        rssi_vals = []
+        data_dir = "/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/"
+        with open(data_dir + 'out_path' + str(path_num) + '.csv', 'r') as rssi: # read in RSSI file for the given set_num
+            csv_reader = csv.reader(rssi, delimiter=',')
+            for row in csv_reader:
+                timestamp = row[0]
+                x_est = row[1]
+                y_est = row[2]
+                new_r = [timestamp, x_est, y_est]
+                rssi_vals.append(new_r)
+
+        accel, gyro = parse_dcnn_data_for_pos_est('test', 'iphone', path_num)
+        thetas = []
+        velocities = []
+        positions = []
+        gt_positions = []
+        base_ts = accel[0][0]
+        init_x = 8
+        init_y = 1
+
+        # perform integration on gyro data to get theta vector
+        for i in range(0,len(accel) - 1):
+            print("-------- New Position Estimation --------")
+            # check if there is a new rssi measurement
+                # set new base_ts
+                # set new init point
+
+            b = accel[i + 1][0] - base_ts
+            theta_x = integrate.quad(lambda x: gyro[i][1], 0, b)[0]
+            theta_y = integrate.quad(lambda x: gyro[i][2], 0, b)[0]
+            theta_z = integrate.quad(lambda x: gyro[i][3], 0, b)[0]
+            thetas.append([theta_x, theta_y, theta_z])
+            print("Theta: ", theta_x, theta_y, theta_z)
+            
+            # find rotation matrix
+            Rot = R([theta_x, theta_y, theta_z])
+
+            # apply rotation matrix to acceleration vector
+            a_vec = np.transpose(np.asarray([[accel[i][1], accel[i][2], accel[i][3]]]))
+            rot_accel = np.dot(Rot,a_vec)
+            print("Rotated accel: ", rot_accel[0], rot_accel[1], rot_accel[2])
+
+            # perform integration to get velocity
+            x_vel = integrate.quad(lambda x: rot_accel[0], 0, b)[0]
+            y_vel = integrate.quad(lambda x: rot_accel[1], 0, b)[0]
+            z_vel = integrate.quad(lambda x: rot_accel[2], 0, b)[0]
+            velocities.append([x_vel, y_vel, z_vel])
+            print ("Velocity: ", x_vel, y_vel, z_vel)
+
+            # perform integration to get position
+            x = integrate.quad(lambda x: x_vel, 0, b)[0] + init_x
+            y = integrate.quad(lambda x: y_vel, 0, b)[0] + init_y
+            z = integrate.quad(lambda x: z_vel, 0, b)[0]
+            positions.append([x, y, z])
+            print("Postion: ", x, y, z)
+            gt_x = accel[i][5]
+            gt_y = accel[i][6]
+            gt_positions.append([gt_x, gt_y])
+
+        time = np.linspace(0,len(positions),num=len(positions))
+        positions = np.asarray(positions)
+        xs, = plt.plot(time, positions[:,0], color='green', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        ys, = plt.plot(time, positions[:,1], color='red', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        plt.title("Positions vs. time")
+        plt.legend([xs, ys], ["x", "y"])
+        plt.savefig("/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/dev/velocity_estimation/imu_integration_results/pos_v_t_" + str(path_num) + ".png")
+        # # plt.legend("x", "y")
+
+        plt.figure()
+        velocities = np.asarray(velocities)
+        xvels, = plt.plot(time, velocities[:,0], color='green', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        yvels, = plt.plot(time, velocities[:,1], color='red', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        plt.title("Velocities vs. time")
+        plt.legend([xvels, yvels], ["x vel", "y vel"])
+        plt.savefig("/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/dev/velocity_estimation/imu_integration_results/vel_v_t_" + str(path_num) + ".png")
+        # plt.show()
+
+        plt.figure()
+        gt_positions = np.asarray(gt_positions)
+        x_m, = plt.plot(time, positions[:,0], color='green', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        x_gt, = plt.plot(time, gt_positions[:,0], color='red', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        plt.title("X values vs. time")
+        plt.legend([x_m, x_gt], ["measured", "gt"])
+        plt.savefig("/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/dev/velocity_estimation/imu_integration_results/x_gt_v_t_" + str(path_num) + ".png")
+        # plt.show()
+
+        plt.figure()
+        meas_pos, = plt.plot(positions[:,0], positions[:,1], color='green', marker='o', linestyle='dashed', linewidth=2)
+        gt_pos, = plt.plot(gt_positions[:,0], gt_positions[:,1], color='red', marker='o', linestyle='dashed', linewidth=2)
+        plt.title("Path Estimation")
+        plt.legend([meas_pos, gt_pos], ["estimation", "ground truth"])
+        plt.savefig("/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/dev/velocity_estimation/imu_integration_results/path_plot_outliers" + str(path_num) + ".png")
+
+        rsme_dist = []
+        rmse_x_vals = []
+        rmse_y_vals = []
+        positions_no_outliers = []
+        gt_positions_no_outliers = []
+        for (m_row, gt_row) in zip(positions, gt_positions):
+            x_err = rmse_x_vals.append(abs(m_row[0] - gt_row[0]))
+            y_err = rmse_y_vals.append(abs(m_row[1] - gt_row[1]))
+            dist_err = math.dist([m_row[0], m_row[1]], [gt_row[0], gt_row[1]])
+            rsme_dist.append(dist_err)
+            if(dist_err < 10):
+                positions_no_outliers.append(m_row)
+                gt_positions_no_outliers.append(gt_row)
+        
+        plt.figure()
+        positions_no_outliers = np.asarray(positions_no_outliers)
+        gt_positions_no_outliers = np.asarray(gt_positions_no_outliers)
+        meas_pos, = plt.plot(positions_no_outliers[:,0], positions_no_outliers[:,1], color='green', marker='o', linestyle='dashed', linewidth=2)
+        gt_pos, = plt.plot(gt_positions[:,0], gt_positions[:,1], color='red', marker='o', linestyle='dashed', linewidth=2)
+        plt.title("Path Estimation (No outliers)")
+        plt.legend([meas_pos, gt_pos], ["estimation", "ground truth"])
+        plt.savefig("/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/dev/velocity_estimation/imu_integration_results/path_plot_no_outliers" + str(path_num) + ".png")
+
+        plt.figure()
+        x_err, = plt.plot(time, rmse_x_vals, color='green', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        y_err, = plt.plot(time, rmse_y_vals, color='red', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        plt.title("Error vs. time, " + "Path " + str(path_num))
+        plt.legend([x_err, y_err], ["x", "y"])
+        plt.savefig("/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/dev/velocity_estimation/imu_integration_results/x_y_error_" + str(path_num) + ".png")
+        
+        plt.figure()
+        x_err, = plt.plot(time, rsme_dist, color='green', marker='o', linestyle='dashed', linewidth=2, markersize=10)
+        plt.title("Distance error vs. time, " + "Path " + str(path_num))
+        plt.savefig("/Users/gillianminnehan/Documents/macbookpro_docs/umich/eecs507/final-proj/indoor-localization/dev/velocity_estimation/imu_integration_results/dist_error_" + str(path_num) + ".png")
+        
+        #plt.show()
+        input("Press enter for next set of graphs")
+
 def main():
     # train
     # a1, g1 = parse_dcnn_data('train', 'iphone', 1)
@@ -331,40 +583,20 @@ def main():
     # a2, g2 = parse_dcnn_data('test', 'watch', 3) 
 
     # Uncomment to parse dcnn_data
-    for i in range(1,4):
-        a1, g1 = parse_dcnn_data_for_pos_est('test', 'iphone', i)
-        df = pd.DataFrame(a1)
-        df.to_csv('test_accel_parsed' + str(i) + '.csv', index=False)
-        df = pd.DataFrame(g1)
-        df.to_csv('test_gyro_parsed' + str(i) + '.csv', index=False)
-    
-    # TODO: un-hard-code
-    # perform integration on gyro data to get theta vector
-    theta_x = integrate.quad(lambda x: -0.005673864856362343, 0, 1.8828)
-    theta_y = integrate.quad(lambda x: -0.07081904262304306, 0, 1.8828)
-    theta_z = integrate.quad(lambda x: -0.07306914776563644, 0, 1.8828)
-
-    # find rotation matrix
-    Rot = R([theta_x[0], theta_y[0], theta_z[0]])
-
-    # apply rotation matrix to acceleration vector
-    accel = np.transpose(np.asarray([[0.115570068359375, -0.0550994873046875, -0.95159912109375]]))
-    rot_accel = np.dot(Rot,accel)
-
-    # perform integration to get position
-    x = integrate.quad(lambda x: rot_accel[0], 0, 1.8828)
-    y = integrate.quad(lambda x: rot_accel[1], 0, 1.8828)
-    z = integrate.quad(lambda x: rot_accel[2], 0, 1.8828)
-
-    print(x[0], y[0], z[0])
+    results_no_rssi()
+    results_with_rssi()
 
     # Uncomment to parse rssi_data into a csv file
-    # threshold = 2 # seconds
-    # for i in range(1,4):
-    #     r = parse_rssi_data(4,5,2021,i,threshold) # 
-    #     df = pd.DataFrame(r)
-    #     df.to_csv('test_rssi_parsed' + str(i) + '_thresh' + str(threshold) + '.csv', index=False)
-    
+        # threshold = 2 # seconds
+        # for i in range(1,4):
+        #     r = parse_rssi_data(4,5,2021,i,threshold) # 
+        #     df = pd.DataFrame(r)
+        #     df.to_csv('test_rssi_parsed' + str(i) + '_thresh' + str(threshold) + '.csv', index=False)
+        # positions = np.asarray(positions)
+        # plt.plot(positions[:,0], positions[:,1], color='green', marker='o', linestyle='dashed', linewidth=2, markersize=12)
+        # plt.title("Positions")
+        # plt.show()
+
     print("Success!")
 
 if __name__ == "__main__": 

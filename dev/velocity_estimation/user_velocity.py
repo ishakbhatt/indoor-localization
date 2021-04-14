@@ -13,7 +13,7 @@ import pandas as pd
 #from scipy.signal import butter
 #from scipy.signal import lfilter
 import matplotlib
-matplotlib.use("agg")
+#matplotlib.use("agg")
 import matplotlib.pyplot as plt
 #from tensorflow import keras
 from datetime import datetime, timezone
