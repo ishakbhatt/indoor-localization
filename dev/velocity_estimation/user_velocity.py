@@ -245,7 +245,7 @@ def coordinate_sys_alignment(sensor_x, sensor_y, sensor_z):
 ##                                       ##
 ###########################################
 
-def low_pass_filter(sensor_array, sensor, cutoff_freq):
+def low_pass_filter(sensor_array, sensor, cutoff_freq, sensor_type):
     '''
     Apply low pass filter on sensor data based on PSD.
     '''
@@ -270,6 +270,10 @@ def low_pass_filter(sensor_array, sensor, cutoff_freq):
             plt.plot(time, sensor_array[0:sensor_array.shape[0], i], 'b-', label=sensor)
             plt.plot(time, filtered_signal, 'g-', linewidth=2, label='filtered signal')
             plt.xlabel('Time (s)')
+            if(sensor_type == "accel"):
+                plt.ylabel('Gravitational Force (G)')
+            elif(sensor_type == "gyro"):
+                plt.ylabel('Rotation Rate (rad/s)')
             plt.legend(loc="upper right")
             plt.title("Signal vs LP Filtered signal: " + sensor + " " + xyz[i])
             plt.savefig(get_results_directory() + "/" + sensor + "_" + xyz[i] + "_filtered.png")
@@ -505,22 +509,22 @@ def main():
         iwatch_train_gyro_sensor = "iWatchGyroTrain" + str(i+1)
 
         # LPF
-        x, y, z = low_pass_filter(iphone_accel_train[i], iphone_train_accel_sensor, iphone_train_freq[0][i])
+        x, y, z = low_pass_filter(iphone_accel_train[i], iphone_train_accel_sensor, iphone_train_freq[0][i], "accel")
         temp_list = []
         temp_list.extend([x, y, z])
         iphone_accel_filtered_train.append(temp_list)
 
-        x, y, z = low_pass_filter(iphone_gyro_train[i], iphone_train_gyro_sensor, iphone_train_freq[1][i])
+        x, y, z = low_pass_filter(iphone_gyro_train[i], iphone_train_gyro_sensor, iphone_train_freq[1][i], "gyro")
         temp_list = []
         temp_list.extend([x, y, z])
         iphone_gyro_filtered_train.append(temp_list)
 
-        x, y, z = low_pass_filter(iwatch_accel_train[i], iwatch_train_accel_sensor, watch_train_freq[0][i])
+        x, y, z = low_pass_filter(iwatch_accel_train[i], iwatch_train_accel_sensor, watch_train_freq[0][i], "accel")
         temp_list = []
         temp_list.extend([x, y, z])
         iwatch_accel_filtered_train.append(temp_list)
 
-        x, y, z = low_pass_filter(iwatch_gyro_train[i], iwatch_train_gyro_sensor, watch_train_freq[1][i])
+        x, y, z = low_pass_filter(iwatch_gyro_train[i], iwatch_train_gyro_sensor, watch_train_freq[1][i], "gyro")
         temp_list = []
         temp_list.extend([x, y, z])
         iwatch_gyro_filtered_train.append(temp_list)
@@ -533,22 +537,22 @@ def main():
         iwatch_test_gyro_sensor = "iWatchGyroTest" + str(i+1)
 
         # LPF
-        x, y, z = low_pass_filter(iphone_accel_test[i], iphone_test_accel_sensor, iphone_train_freq[0][i])
+        x, y, z = low_pass_filter(iphone_accel_test[i], iphone_test_accel_sensor, iphone_train_freq[0][i], "accel")
         temp_list = []
         temp_list.extend([x, y, z])
         iphone_accel_filtered_test.append(temp_list)
 
-        x, y, z = low_pass_filter(iphone_gyro_test[i], iphone_test_gyro_sensor, iphone_test_freq[1][i])
+        x, y, z = low_pass_filter(iphone_gyro_test[i], iphone_test_gyro_sensor, iphone_test_freq[1][i], "gyro")
         temp_list = []
         temp_list.extend([x, y, z])
         iphone_gyro_filtered_test.append(temp_list)
 
-        x, y, z = low_pass_filter(iwatch_accel_test[i], iwatch_test_accel_sensor, watch_test_freq[0][i])
+        x, y, z = low_pass_filter(iwatch_accel_test[i], iwatch_test_accel_sensor, watch_test_freq[0][i], "accel")
         temp_list = []
         temp_list.extend([x, y, z])
         iwatch_accel_filtered_test.append(temp_list)
 
-        x, y, z = low_pass_filter(iwatch_gyro_test[i], iwatch_test_gyro_sensor, watch_test_freq[1][i])
+        x, y, z = low_pass_filter(iwatch_gyro_test[i], iwatch_test_gyro_sensor, watch_test_freq[1][i], "gyro")
         temp_list = []
         temp_list.extend([x, y, z])
         iwatch_gyro_filtered_test.append(temp_list)
