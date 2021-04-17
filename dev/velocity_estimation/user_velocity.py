@@ -127,35 +127,36 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     model = keras.Sequential()
 
     # CASCADED LAYER 1
-    combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
+    #combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
+    #model.add(keras.layers.Dense(1, input_dim=4))
     model.add(keras.layers.Conv2D(filters=16, kernel_size=(2, 2), padding='same'))
     # batch normalization layer to lower sensitivity to network initialization
     model.add(keras.layers.BatchNormalization())
     # ReLU activation layer
     model.add(keras.layers.Activation('relu'))
     # Max Pooling layer
-    model.add(keras.layers.MaxPooling2D(pool_size=(2, 2), input_shape=(combined_train.shape[0], 2, 2, 1), strides=(1, 1), padding='same'))
+    model.add(keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(1, 1), padding='same'))
 
     # CASCADED LAYER 2
-    combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
+    #combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
     model.add(keras.layers.Conv2D(filters=32, kernel_size=(2, 2), padding='same'))
     # batch normalization layer to lower sensitivity to network initialization
     model.add(keras.layers.BatchNormalization())
     # ReLU activation layer
     model.add(keras.layers.Activation('relu'))
     # Max Pooling layer
-    model.add(keras.layers.MaxPooling2D(pool_size=(2, 2), input_shape=(combined_train.shape[0], 2, 2, 1), strides=(1, 1), padding='same'))
+    model.add(keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(1, 1), padding='same'))
 
     # CASCADED LAYER 3
-    combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
+    #combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
     model.add(keras.layers.Conv2D(filters=48, kernel_size=(2, 2), padding='same'))
     # batch normalization layer to lower sensitivity to network initialization
     model.add(keras.layers.BatchNormalization())
     # ReLU activation layer
     model.add(keras.layers.Activation('relu'))
     # Max Pooling layer
-    model.add(keras.layers.MaxPooling2D(pool_size=(2, 2), input_shape=(combined_train.shape[0], 2, 2, 1), strides=(1, 1), padding='same'))
-
+    model.add(keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(1, 1), padding='same'))
+    # input_shape=(combined_train.shape[0], 2, 2, 1),
     # CASCADED LAYER 4 (Maxpooling excluded in last group)
     model.add(keras.layers.Conv2D(filters=64, kernel_size=(2, 2), padding='same'))
     # batch normalization layer to lower sensitivity to network initialization
@@ -167,7 +168,7 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     model.add(keras.layers.Dropout(.2))
 
     # Fully connected layer: compute class scores fed into regression layer
-    model.add(keras.layers.Dense(1))
+    model.add(keras.layers.Dense(1, input_dim=4))
 
     # Regression layer
     #model.add(keras.wrappers.scikit_learn.KerasRegressor())
@@ -177,7 +178,8 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
 
     # fit the model (Train) # TODO: tune epoch and batch_size
     combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
-    velocity_train = keras.utils.to_categorical(velocity_train, 10)
+    velocity_train = np.column_stack((velocity_train, velocity_train, velocity_train, velocity_train))
+    velocity_train = velocity_train.reshape(velocity_train.shape[0], 2, 2, 1)
     # TODO: determine classes for vel train, epochs and batch size and regressor
     model.fit(combined_train, velocity_train, validation_data=(combined_train, velocity_train), epochs=1, batch_size=combined_train.shape[0])
 
@@ -186,8 +188,9 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
 
     # evaluate the model
     print("Evaluate on test data")
-    combined_test = combined_train.reshape(combined_test.shape[0], combined_test.shape[1]-2, 2, 1)
-    velocity_test = keras.utils.to_categorical(velocity_test, 10)
+    combined_test = combined_test.reshape(combined_test.shape[0], 2, 2, 1)
+    velocity_test = np.column_stack((velocity_test, velocity_test, velocity_test, velocity_test))
+    velocity_test = velocity_test.reshape(velocity_test.shape[0], 2, 2, 1)
     results = model.evaluate(combined_test, velocity_test, batch_size=128) # todo: fix
     print("test loss, test acc:", results)
 
