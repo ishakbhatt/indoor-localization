@@ -91,8 +91,70 @@ def concat_test_vel(array_list):
     final = np.concatenate((sub_array1, array_list[2][:, 4]), axis=0)
     return final
 
+def deep_neural_network_functional(horizontal_accel_train, vertical_accel_train, horizontal_gyro_train, vertical_gyro_train, velocity_train,
+                        horizontal_accel_test, vertical_accel_test, horizontal_gyro_test, vertical_gyro_test, velocity_test):
+
+    # magnitude
+    accel_horizontal_mag_train, accel_vertical_mag_train = magnitude(horizontal_accel_train, vertical_accel_train)
+    gyro_horizontal_mag_train, gyro_vertical_mag_train = magnitude(horizontal_gyro_train, vertical_gyro_train)
+
+    accel_horizontal_mag_test, accel_vertical_mag_test = magnitude(horizontal_accel_test, vertical_accel_test)
+    gyro_horizontal_mag_test, gyro_vertical_mag_test = magnitude(horizontal_gyro_test, vertical_gyro_test)
+
+    input1 = keras.layers.Input(shape=(accel_horizontal_mag_train.shape[0], ))
+    input2 = keras.layers.Input(shape=(accel_vertical_mag_train.shape[0], ))
+    input3 = keras.layers.Input(shape=(gyro_horizontal_mag_train.shape[0],))
+    input4 = keras.layers.Input(shape=(gyro_vertical_mag_train.shape[0],))
+    input_a = keras.layers.Concatenate()([input1, input2], axis=0)
+    input_b = keras.layers.Concatenate()([input3, input4], axis=0)
+    input = keras.layers.Concatenate()([input_a, input_b], axis=0)
+
+    # CASCADED LAYER 1
+    conv_16 = (keras.layers.Conv2D(filters=16, kernel_size=(2, 2), padding='same'))(input)
+    # batch normalization layer to lower sensitivity to network initialization
+    batch_norm_16 = (keras.layers.BatchNormalization())(input)
+    # ReLU activation layer
+    relu_16 = (keras.layers.Activation('relu'))(input)
+    # Max Pooling layer
+    maxpool_16 = (keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(1, 1), padding='same'))(input)
+
+    # CASCADED LAYER 2
+    conv_32 = (keras.layers.Conv2D(filters=32, kernel_size=(2, 2), padding='same'))(input)
+    # batch normalization layer to lower sensitivity to network initialization
+    batch_norm_32 = (keras.layers.BatchNormalization())(input)
+    # ReLU activation layer
+    relu_32 = (keras.layers.Activation('relu'))(input)
+    # Max Pooling layer
+    maxpool_32 = (keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(1, 1), padding='same'))(input)
+
+    # CASCADED LAYER 3
+    conv_48 = (keras.layers.Conv2D(filters=48, kernel_size=(2, 2), padding='same'))(input)
+    # batch normalization layer to lower sensitivity to network initialization
+    batch_norm_48 = (keras.layers.BatchNormalization())(input)
+    # ReLU activation layer
+    relu_48 = (keras.layers.Activation('relu'))(input)
+    # Max Pooling layer
+    maxpool_48 = (keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(1, 1), padding='same'))(input)
+    # input_shape=(combined_train.shape[0], 2, 2, 1),
+
+    # CASCADED LAYER 4 (Maxpooling excluded in last group)
+    conv_64 = (keras.layers.Conv2D(filters=64, kernel_size=(2, 2), padding='same'))(input)
+    # batch normalization layer to lower sensitivity to network initialization
+    batch_norm_64 = (keras.layers.BatchNormalization())(input)
+    # ReLU activation layer
+    relu_64 = (keras.layers.Activation('relu'))(input)
+    # Dropout layer: alleviate overfitting
+    dropout = (keras.layers.Dropout(.2))(input)
+
+    # Fully connected layer: compute class scores fed into regression layer
+    output = (keras.layers.Dense(1, input_dim=4))
+
+    model = keras.Model(inputs = [input_a, input_b], outputs=output)
+    print(model.summary())
+
+
 def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal_gyro_train, vertical_gyro_train, velocity_train,
-                        horizontal_accel_test, vertical_accel_test, horizontal_gyro_test, vertical_gyro_test, velocity_test): # TODO: update with train and test
+                        horizontal_accel_test, vertical_accel_test, horizontal_gyro_test, vertical_gyro_test, velocity_test):
     '''
     Apply a DCNN to estimate user velocity.
     https://keras.io/getting_started/intro_to_keras_for_engineers/
@@ -102,11 +164,9 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     # magnitude
     accel_horizontal_mag_train, accel_vertical_mag_train = magnitude(horizontal_accel_train, vertical_accel_train)
     gyro_horizontal_mag_train, gyro_vertical_mag_train = magnitude(horizontal_gyro_train, vertical_gyro_train)
-    images_train = construct_images(accel_horizontal_mag_train, accel_vertical_mag_train, gyro_horizontal_mag_train, gyro_vertical_mag_train)
 
     accel_horizontal_mag_test, accel_vertical_mag_test = magnitude(horizontal_accel_test, vertical_accel_test)
     gyro_horizontal_mag_test, gyro_vertical_mag_test = magnitude(horizontal_gyro_test, vertical_gyro_test)
-    images_test = construct_images(accel_horizontal_mag_test, accel_vertical_mag_test, gyro_horizontal_mag_test, gyro_vertical_mag_test)
 
     # combined TODO: decide combined or constructed images
     sub_array1_train = np.concatenate((accel_horizontal_mag_train, accel_vertical_mag_train), axis=1)
@@ -127,8 +187,6 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     model = keras.Sequential()
 
     # CASCADED LAYER 1
-    #combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
-    #model.add(keras.layers.Dense(1, input_dim=4))
     model.add(keras.layers.Conv2D(filters=16, kernel_size=(2, 2), padding='same'))
     # batch normalization layer to lower sensitivity to network initialization
     model.add(keras.layers.BatchNormalization())
@@ -138,7 +196,6 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     model.add(keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(1, 1), padding='same'))
 
     # CASCADED LAYER 2
-    #combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
     model.add(keras.layers.Conv2D(filters=32, kernel_size=(2, 2), padding='same'))
     # batch normalization layer to lower sensitivity to network initialization
     model.add(keras.layers.BatchNormalization())
@@ -148,7 +205,6 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     model.add(keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(1, 1), padding='same'))
 
     # CASCADED LAYER 3
-    #combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
     model.add(keras.layers.Conv2D(filters=48, kernel_size=(2, 2), padding='same'))
     # batch normalization layer to lower sensitivity to network initialization
     model.add(keras.layers.BatchNormalization())
@@ -157,13 +213,13 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     # Max Pooling layer
     model.add(keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(1, 1), padding='same'))
     # input_shape=(combined_train.shape[0], 2, 2, 1),
+
     # CASCADED LAYER 4 (Maxpooling excluded in last group)
     model.add(keras.layers.Conv2D(filters=64, kernel_size=(2, 2), padding='same'))
     # batch normalization layer to lower sensitivity to network initialization
     model.add(keras.layers.BatchNormalization())
     # ReLU activation layer
     model.add(keras.layers.Activation('relu'))
-
     # Dropout layer: alleviate overfitting
     model.add(keras.layers.Dropout(.2))
 
@@ -174,12 +230,13 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     #model.add(keras.wrappers.scikit_learn.KerasRegressor())
 
     # compile model using mse as a measure of model performance
-    model.compile(loss='mean_squared_error')
+    model.compile(loss='mean_squared_error', metrics=['accuracy'])
 
     # fit the model (Train) # TODO: tune epoch and batch_size
-    combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
+
     velocity_train = np.column_stack((velocity_train, velocity_train, velocity_train, velocity_train))
     velocity_train = velocity_train.reshape(velocity_train.shape[0], 2, 2, 1)
+    combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
     # TODO: determine classes for vel train, epochs and batch size and regressor
     model.fit(combined_train, velocity_train, validation_data=(combined_train, velocity_train), epochs=1, batch_size=combined_train.shape[0])
 
@@ -560,11 +617,6 @@ def main():
         temp_list.extend([x, y, z])
         iwatch_gyro_filtered_test.append(temp_list)
 
-        #iphone_accel_filtered_test[i][0], iphone_accel_filtered_test[i][1], iphone_accel_filtered_test[i][2] = low_pass_filter(iphone_accel_test[i], iphone_test_accel_sensor, iphone_test_freq[0][i])
-        ##iphone_gyro_filtered_test[i][0], iphone_gyro_filtered_test[i][1], iphone_gyro_filtered_test[i][2] = low_pass_filter(iphone_gyro_test[i], iphone_test_gyro_sensor, iphone_test_freq[1][i])
-        #iwatch_accel_filtered_test[i][0], iwatch_accel_filtered_test[i][1], iwatch_accel_filtered_test[i][2] = low_pass_filter(iphone_accel_test[i], iwatch_test_accel_sensor, watch_test_freq[0][i])
-        #iwatch_gyro_filtered_test[i][0], iwatch_gyro_filtered_test[i][1], iwatch_gyro_filtered_test[i][2] = low_pass_filter(iphone_gyro_test[i], iwatch_test_gyro_sensor, watch_test_freq[1][i])
-
     # Coordinate System Alignment
     iphone_accel_horizontal_train = []
     iphone_accel_vertical_train = []
@@ -605,15 +657,6 @@ def main():
         iwatch_gyro_horizontal_train.append(h)
         iwatch_gyro_vertical_train.append(v)
 
-        #iphone_accel_horizontal_train[i], iphone_accel_vertical_train[i] = coordinate_sys_alignment(
-        #    iphone_accel_filtered_train[i][0], iphone_accel_filtered_train[i][1], iphone_accel_filtered_train[i][2])
-        #iphone_gyro_horizontal_train[i], iphone_gyro_vertical_train[i] = coordinate_sys_alignment(
-        #    iphone_gyro_filtered_train[i][0], iphone_gyro_filtered_train[i][1], iphone_gyro_filtered_train[i][2])
-        #iwatch_accel_horizontal_train[i], iwatch_accel_vertical_train[i] = coordinate_sys_alignment(
-        #    iwatch_accel_filtered_train[i][0], iwatch_accel_filtered_train[i][1], iwatch_accel_filtered_train[i][2])
-        #iwatch_gyro_horizontal_train[i], iwatch_gyro_vertical_train[i] = coordinate_sys_alignment(
-        #    iwatch_gyro_filtered_train[i][0], iwatch_gyro_filtered_train[i][1], iwatch_gyro_filtered_train[i][2])
-
     for i in range(3):  # Coordinate System Alignment: Test Data
         h, v = coordinate_sys_alignment(
             iphone_accel_filtered_test[i][0], iphone_accel_filtered_test[i][1], iphone_accel_filtered_test[i][2])
@@ -636,26 +679,6 @@ def main():
         iwatch_gyro_vertical_test.append(v)
 
     # Combine training data into one numpy array
-    iphone_accel_h_train = np.empty([iphone_accel_horizontal_train[0].shape[0], 3])
-    iphone_accel_v_train = np.empty([iphone_accel_vertical_train[0].shape[1], 3])
-    iphone_gyro_h_train = np.empty([iphone_accel_horizontal_train[0].shape[0], 3])
-    iphone_gyro_v_train = np.empty([iphone_accel_vertical_train[0].shape[1], 3])
-
-    iwatch_accel_h_train = np.empty([iwatch_accel_horizontal_train[0].shape[0], 3])
-    iwatch_accel_v_train = np.empty([iwatch_accel_vertical_train[0].shape[1], 3])
-    iwatch_gyro_h_train = np.empty([iwatch_accel_horizontal_train[0].shape[0], 3])
-    iwatch_gyro_v_train = np.empty([iwatch_accel_vertical_train[0].shape[1], 3])
-
-    iphone_accel_h_test = np.empty([iphone_accel_horizontal_test[0].shape[0], 3])
-    iphone_accel_v_test = np.empty([iphone_accel_vertical_test[0].shape[1], 3])
-    iphone_gyro_h_test = np.empty([iphone_accel_horizontal_test[0].shape[0], 3])
-    iphone_gyro_v_test = np.empty([iphone_accel_vertical_test[0].shape[1], 3])
-
-    iwatch_accel_h_test = np.empty([iwatch_accel_horizontal_test[0].shape[0], 3])
-    iwatch_accel_v_test = np.empty([iwatch_accel_vertical_test[0].shape[1], 3])
-    iwatch_gyro_h_test = np.empty([iwatch_accel_horizontal_test[0].shape[0], 3])
-    iwatch_gyro_v_test = np.empty([iwatch_accel_vertical_test[0].shape[1], 3])
-
     iphone_accel_h_train = concat_train_imu(iphone_accel_horizontal_train)
     iphone_accel_v_train = concat_train_imu(iphone_accel_vertical_train)
     iphone_gyro_h_train = concat_train_imu(iphone_gyro_horizontal_train)
@@ -677,18 +700,16 @@ def main():
     iphone_velocity_train = concat_train_vel(iphone_accel_train)
     iphone_velocity_test = concat_test_vel(iphone_accel_test)
     iwatch_velocity_train = concat_train_vel(iwatch_accel_train)
-    iwatch_velocity_test = concat_test_vel(iwatch_accel_train)
+    iwatch_velocity_test = concat_test_vel(iwatch_accel_test)
 
     # velocities
-
-
     deep_neural_network(iphone_accel_h_train, iphone_accel_v_train, iphone_gyro_h_train, iphone_gyro_v_train,
                         iphone_velocity_train, iphone_accel_h_test, iphone_accel_v_test, iphone_gyro_h_test,
                         iphone_gyro_v_test, iphone_velocity_test)
 
-    '''deep_neural_network(iwatch_accel_h_train, iwatch_accel_v_train, iwatch_gyro_h_train, iwatch_gyro_v_train,
+    deep_neural_network(iwatch_accel_h_train, iwatch_accel_v_train, iwatch_gyro_h_train, iwatch_gyro_v_train,
                         iwatch_velocity_train, iwatch_accel_h_test, iwatch_accel_v_test, iwatch_gyro_h_test,
-                        iwatch_gyro_v_test, iwatch_velocity_test)'''
+                        iwatch_gyro_v_test, iwatch_velocity_test)
     print("Finished.")
 
 if __name__ == "__main__": 
