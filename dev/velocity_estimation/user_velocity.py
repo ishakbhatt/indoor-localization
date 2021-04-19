@@ -91,67 +91,17 @@ def concat_test_vel(array_list):
     final = np.concatenate((sub_array1, array_list[2][:, 4]), axis=0)
     return final
 
-def deep_neural_network_functional(horizontal_accel_train, vertical_accel_train, horizontal_gyro_train, vertical_gyro_train, velocity_train,
-                        horizontal_accel_test, vertical_accel_test, horizontal_gyro_test, vertical_gyro_test, velocity_test):
-
-    # magnitude
-    accel_horizontal_mag_train, accel_vertical_mag_train = magnitude(horizontal_accel_train, vertical_accel_train)
-    gyro_horizontal_mag_train, gyro_vertical_mag_train = magnitude(horizontal_gyro_train, vertical_gyro_train)
-
-    accel_horizontal_mag_test, accel_vertical_mag_test = magnitude(horizontal_accel_test, vertical_accel_test)
-    gyro_horizontal_mag_test, gyro_vertical_mag_test = magnitude(horizontal_gyro_test, vertical_gyro_test)
-
-    input1 = keras.layers.Input(shape=(accel_horizontal_mag_train.shape[0], ))
-    input2 = keras.layers.Input(shape=(accel_vertical_mag_train.shape[0], ))
-    input3 = keras.layers.Input(shape=(gyro_horizontal_mag_train.shape[0],))
-    input4 = keras.layers.Input(shape=(gyro_vertical_mag_train.shape[0],))
-    input_a = keras.layers.Concatenate()([input1, input2], axis=0)
-    input_b = keras.layers.Concatenate()([input3, input4], axis=0)
-    input = keras.layers.Concatenate()([input_a, input_b], axis=0)
-
-    # CASCADED LAYER 1
-    conv_16 = (keras.layers.Conv2D(filters=16, kernel_size=(2, 2), padding='same'))(input)
-    # batch normalization layer to lower sensitivity to network initialization
-    batch_norm_16 = (keras.layers.BatchNormalization())(input)
-    # ReLU activation layer
-    relu_16 = (keras.layers.Activation('relu'))(input)
-    # Max Pooling layer
-    maxpool_16 = (keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(1, 1), padding='same'))(input)
-
-    # CASCADED LAYER 2
-    conv_32 = (keras.layers.Conv2D(filters=32, kernel_size=(2, 2), padding='same'))(input)
-    # batch normalization layer to lower sensitivity to network initialization
-    batch_norm_32 = (keras.layers.BatchNormalization())(input)
-    # ReLU activation layer
-    relu_32 = (keras.layers.Activation('relu'))(input)
-    # Max Pooling layer
-    maxpool_32 = (keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(1, 1), padding='same'))(input)
-
-    # CASCADED LAYER 3
-    conv_48 = (keras.layers.Conv2D(filters=48, kernel_size=(2, 2), padding='same'))(input)
-    # batch normalization layer to lower sensitivity to network initialization
-    batch_norm_48 = (keras.layers.BatchNormalization())(input)
-    # ReLU activation layer
-    relu_48 = (keras.layers.Activation('relu'))(input)
-    # Max Pooling layer
-    maxpool_48 = (keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(1, 1), padding='same'))(input)
-    # input_shape=(combined_train.shape[0], 2, 2, 1),
-
-    # CASCADED LAYER 4 (Maxpooling excluded in last group)
-    conv_64 = (keras.layers.Conv2D(filters=64, kernel_size=(2, 2), padding='same'))(input)
-    # batch normalization layer to lower sensitivity to network initialization
-    batch_norm_64 = (keras.layers.BatchNormalization())(input)
-    # ReLU activation layer
-    relu_64 = (keras.layers.Activation('relu'))(input)
-    # Dropout layer: alleviate overfitting
-    dropout = (keras.layers.Dropout(.2))(input)
-
-    # Fully connected layer: compute class scores fed into regression layer
-    output = (keras.layers.Dense(1, input_dim=4))
-
-    model = keras.Model(inputs = [input_a, input_b], outputs=output)
-    print(model.summary())
-
+def dcnn_results(velocity_test, prediction, path_num, duration, device):
+    '''Plots the DCNN results against number of samples'''
+    plt.figure()
+    time = np.linspace(0, duration, velocity_test.shape[0])
+    vel, = plt.plot(time, velocity_test, label="Actual")
+    pred, = plt.plot(time, prediction, label="Predicted")
+    plt.legend(handles=[vel, pred])
+    plt.title(device + " Path " + str(path_num) + " Velocities: " + "Prediction vs Actual (m/s)")
+    plt.ylabel("Speed (m/s)")
+    plt.xlabel("Time (s)")
+    plt.savefig(get_results_directory() + "/" + device + "_" + "path" + "_" + str(path_num) + "_prediction_vs_actual" + ".png")
 
 def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal_gyro_train, vertical_gyro_train, velocity_train,
                         horizontal_accel_test, vertical_accel_test, horizontal_gyro_test, vertical_gyro_test, velocity_test):
@@ -253,9 +203,12 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
 
     # Generate predictions (probabilities -- the output of the last layer)
     # on new data using `predict`
-    print("Generate predictions for 3 samples")
-    predictions = model.predict(combined_test[:3])
-    print("predictions shape:", predictions.shape)
+    print("Generate predictions for 3 paths...")
+    predictions = model.predict(combined_test)
+    predictions = predictions.reshape([predictions.shape[0], 4])
+    predictions = predictions[:, 0]
+
+    return predictions
 
 ###########################################
 ##                                       ##
@@ -702,14 +655,62 @@ def main():
     iwatch_velocity_train = concat_train_vel(iwatch_accel_train)
     iwatch_velocity_test = concat_test_vel(iwatch_accel_test)
 
-    # velocities
-    deep_neural_network(iphone_accel_h_train, iphone_accel_v_train, iphone_gyro_h_train, iphone_gyro_v_train,
+    # Deep Neural Network for Velocity Estimation
+    print("Predict velocity for phone.")
+    predicted_iphone_velocity_combined = deep_neural_network(iphone_accel_h_train, iphone_accel_v_train, iphone_gyro_h_train, iphone_gyro_v_train,
                         iphone_velocity_train, iphone_accel_h_test, iphone_accel_v_test, iphone_gyro_h_test,
                         iphone_gyro_v_test, iphone_velocity_test)
 
-    deep_neural_network(iwatch_accel_h_train, iwatch_accel_v_train, iwatch_gyro_h_train, iwatch_gyro_v_train,
+    print("Predict velocity for watch.")
+    predicted_watch_velocity_combined = deep_neural_network(iwatch_accel_h_train, iwatch_accel_v_train, iwatch_gyro_h_train, iwatch_gyro_v_train,
                         iwatch_velocity_train, iwatch_accel_h_test, iwatch_accel_v_test, iwatch_gyro_h_test,
                         iwatch_gyro_v_test, iwatch_velocity_test)
+
+    print("Prediction complete.")
+
+    print("Extracting 3 separate paths for analysis.")
+    accel_test_iphone_1, gyro_test_iphone_1 = parse.parse_dcnn_data('test', 'iphone', 1)
+    iphone_time_1 = (accel_test_iphone_1[:, 0]-accel_test_iphone_1[0, 0])[accel_test_iphone_1.shape[0]-1]
+    accel_test_watch_1, gyro_test_watch_1 = parse.parse_dcnn_data('test', 'watch', 1)
+    watch_time_1 = (accel_test_watch_1[:, 0] - accel_test_watch_1[0, 0])[accel_test_watch_1.shape[0]-1]
+    accel_test_iphone_2, gyro_test_iphone_2 = parse.parse_dcnn_data('test', 'iphone', 2)
+    iphone_time_2 = (accel_test_iphone_2[:, 0] - accel_test_iphone_2[0, 0])[accel_test_iphone_2.shape[0] - 1]
+    accel_test_watch_2, gyro_test_watch_2 = parse.parse_dcnn_data('test', 'watch', 2)
+    watch_time_2 = (accel_test_watch_2[:, 0] - accel_test_watch_2[0, 0])[accel_test_watch_2.shape[0] - 1]
+    accel_test_iphone_3, gyro_test_iphone_3 = parse.parse_dcnn_data('test', 'iphone', 3)
+    iphone_time_3 = (accel_test_iphone_3[:, 0] - accel_test_iphone_3[0, 0])[accel_test_iphone_3.shape[0] - 1]
+    accel_test_watch_3, gyro_test_watch_3 = parse.parse_dcnn_data('test', 'watch', 3)
+    watch_time_3 = (accel_test_watch_3[:, 0] - accel_test_watch_3[0, 0])[accel_test_watch_3.shape[0] - 1]
+
+    path1_iphone_velocity = accel_test_iphone_1[:, 4]
+    path2_iphone_velocity = accel_test_iphone_2[:, 4]
+    path3_iphone_velocity = accel_test_iphone_3[:, 4]
+
+    path1_watch_velocity = accel_test_watch_1[:, 4]
+    path2_watch_velocity = accel_test_watch_2[:, 4]
+    path3_watch_velocity = accel_test_watch_3[:, 4]
+
+    predict_iphone_path1 = predicted_iphone_velocity_combined[0:path1_iphone_velocity.shape[0]]
+    next_start = path1_iphone_velocity.shape[0]
+    predict_iphone_path2 = predicted_iphone_velocity_combined[next_start:next_start + path2_iphone_velocity.shape[0]]
+    next_start = path2_iphone_velocity.shape[0]
+    predict_iphone_path3 = predicted_iphone_velocity_combined[next_start:next_start + path3_iphone_velocity.shape[0]]
+
+    predict_watch_path1 = predicted_watch_velocity_combined[0: path1_watch_velocity.shape[0]]
+    next_start = path1_watch_velocity.shape[0]
+    predict_watch_path2 = predicted_watch_velocity_combined[next_start: next_start + path2_watch_velocity.shape[0]]
+    next_start = path2_watch_velocity.shape[0]
+    predict_watch_path3 = predicted_watch_velocity_combined[next_start: next_start + path3_watch_velocity.shape[0]]
+
+    print("Plotting prediction and actual accuracy results from CNN.")
+    dcnn_results(path1_iphone_velocity, predict_iphone_path1, 1, iphone_time_1, "IPhone")
+    dcnn_results(path2_iphone_velocity, predict_iphone_path2, 2, iphone_time_2, "IPhone")
+    dcnn_results(path3_iphone_velocity, predict_iphone_path3, 3, iphone_time_3, "IPhone")
+
+    dcnn_results(path1_watch_velocity, predict_watch_path1, 1, watch_time_1, "Watch")
+    dcnn_results(path2_watch_velocity, predict_watch_path2, 2, watch_time_2, "Watch")
+    dcnn_results(path3_watch_velocity, predict_watch_path3, 3, watch_time_3, "Watch")
+
     print("Finished.")
 
 if __name__ == "__main__": 
