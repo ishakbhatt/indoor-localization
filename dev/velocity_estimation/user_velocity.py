@@ -19,6 +19,7 @@ from tensorflow import keras
 from datetime import datetime, timezone
 import tensorflow as tf
 import parse
+from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import train_test_split
 
 ###########################################
@@ -103,38 +104,13 @@ def dcnn_results(velocity_test, prediction, path_num, duration, device):
     plt.xlabel("Time (s)")
     plt.savefig(get_results_directory() + "/" + device + "_" + "path" + "_" + str(path_num) + "_prediction_vs_actual" + ".png")
 
-def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal_gyro_train, vertical_gyro_train, velocity_train,
-                        horizontal_accel_test, vertical_accel_test, horizontal_gyro_test, vertical_gyro_test, velocity_test):
+def base_model():
     '''
-    Apply a DCNN to estimate user velocity.
-    https://keras.io/getting_started/intro_to_keras_for_engineers/
+    Model Definition for Deep Neural Network.
     '''
-
-    ##################### CONSTRUCT THE IMAGES #####################
-    # magnitude
-    accel_horizontal_mag_train, accel_vertical_mag_train = magnitude(horizontal_accel_train, vertical_accel_train)
-    gyro_horizontal_mag_train, gyro_vertical_mag_train = magnitude(horizontal_gyro_train, vertical_gyro_train)
-
-    accel_horizontal_mag_test, accel_vertical_mag_test = magnitude(horizontal_accel_test, vertical_accel_test)
-    gyro_horizontal_mag_test, gyro_vertical_mag_test = magnitude(horizontal_gyro_test, vertical_gyro_test)
-
-    # combined TODO: decide combined or constructed images
-    sub_array1_train = np.concatenate((accel_horizontal_mag_train, accel_vertical_mag_train), axis=1)
-    sub_array2_train = np.concatenate((gyro_horizontal_mag_train, accel_vertical_mag_train), axis=1)
-    combined_train = np.concatenate((sub_array1_train, sub_array2_train), axis=1)
-    num_train_samples = combined_train.shape[0]
-
-    sub_array1_test = np.concatenate((accel_horizontal_mag_test, accel_vertical_mag_test), axis=1)
-    sub_array2_test = np.concatenate((gyro_horizontal_mag_test, accel_vertical_mag_test), axis=1)
-    combined_test = np.concatenate((sub_array1_test, sub_array2_test), axis=1)
-    num_test_samples = combined_test.shape[0]
-
-    # change input shape
-
-    ##################### BUILD THE MODEL #####################
-
     # Create Keras model
     model = keras.Sequential()
+    #model.add(keras.layers.Dense(4, input_dim=4, kernel_initializer='normal', activation='relu'))
 
     # CASCADED LAYER 1
     model.add(keras.layers.Conv2D(filters=16, kernel_size=(2, 2), padding='same'))
@@ -176,11 +152,46 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     # Fully connected layer: compute class scores fed into regression layer
     model.add(keras.layers.Dense(1, input_dim=4))
 
-    # Regression layer
-    #model.add(keras.wrappers.scikit_learn.KerasRegressor())
-
     # compile model using mse as a measure of model performance
     model.compile(loss='mean_squared_error', metrics=['accuracy'])
+
+def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal_gyro_train, vertical_gyro_train, velocity_train,
+                        horizontal_accel_test, vertical_accel_test, horizontal_gyro_test, vertical_gyro_test, velocity_test):
+    '''
+    Apply a DCNN to estimate user velocity.
+    https://keras.io/getting_started/intro_to_keras_for_engineers/
+    '''
+
+    ##################### CONSTRUCT THE IMAGES #####################
+    # magnitude
+    accel_horizontal_mag_train, accel_vertical_mag_train = magnitude(horizontal_accel_train, vertical_accel_train)
+    gyro_horizontal_mag_train, gyro_vertical_mag_train = magnitude(horizontal_gyro_train, vertical_gyro_train)
+
+    accel_horizontal_mag_test, accel_vertical_mag_test = magnitude(horizontal_accel_test, vertical_accel_test)
+    gyro_horizontal_mag_test, gyro_vertical_mag_test = magnitude(horizontal_gyro_test, vertical_gyro_test)
+
+    # combined TODO: decide combined or constructed images
+    sub_array1_train = np.concatenate((accel_horizontal_mag_train, accel_vertical_mag_train), axis=1)
+    sub_array2_train = np.concatenate((gyro_horizontal_mag_train, accel_vertical_mag_train), axis=1)
+    combined_train = np.concatenate((sub_array1_train, sub_array2_train), axis=1)
+    num_train_samples = combined_train.shape[0]
+
+    sub_array1_test = np.concatenate((accel_horizontal_mag_test, accel_vertical_mag_test), axis=1)
+    sub_array2_test = np.concatenate((gyro_horizontal_mag_test, accel_vertical_mag_test), axis=1)
+    combined_test = np.concatenate((sub_array1_test, sub_array2_test), axis=1)
+    num_test_samples = combined_test.shape[0]
+
+    # change input shape
+
+    ##################### BUILD THE MODEL #####################
+
+    # Regression layer
+    estimator = keras.wrappers.scikit_learn.KerasRegressor(build_fn=base_model, epochs=1, batch_size=combined_train.shape[0])
+    #velocity_train = velocity_train.reshape(velocity_train.shape[0], 2, 2, 1)
+    combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
+    results = cross_val_score(estimator, combined_train, velocity_train)
+    print("Baseline: %.2f (%.2f) MSE" % (results.mean(), results.std()))
+
 
     # fit the model (Train) # TODO: tune epoch and batch_size
 
@@ -188,7 +199,7 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     velocity_train = velocity_train.reshape(velocity_train.shape[0], 2, 2, 1)
     combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
     # TODO: determine classes for vel train, epochs and batch size and regressor
-    model.fit(combined_train, velocity_train, validation_data=(combined_train, velocity_train), epochs=1, batch_size=combined_train.shape[0])
+    '''model.fit(combined_train, velocity_train, validation_data=(combined_train, velocity_train), epochs=1, batch_size=combined_train.shape[0])
 
     # Summary
     model.summary()
@@ -206,9 +217,9 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     print("Generate predictions for 3 paths...")
     predictions = model.predict(combined_test)
     predictions = predictions.reshape([predictions.shape[0], 4])
-    predictions = predictions[:, 0]
+    predictions = predictions[:, 0]'''
 
-    return predictions
+    return results
 
 ###########################################
 ##                                       ##
