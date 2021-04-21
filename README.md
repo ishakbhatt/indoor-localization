@@ -1,5 +1,4 @@
-# indoor-localization
-EECS 507 Final Project: Indoor Localization of Apple Devices
+# EECS 507 Final Project: Indoor Localization of Apple Devices
 
 This repository contains source code for the EECS 507 (Embedded Systems Research) final project for the Winter 2021 semester. 
 
