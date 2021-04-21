@@ -216,6 +216,18 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
 ##                                       ##
 ###########################################
 
+def plot_sys_alignment(component, component_type, duration, device, sensor):
+    plt.figure()
+    time = np.linspace(0, duration, component.shape[0])
+    x, = plt.plot(time, component[0], label="X")
+    y, = plt.plot(time, component[1], label="Y")
+    z, = plt.plot(time, component[2], label="Z")
+    plt.legend(handles=[x, y, z])
+    plt.title(device + " " + sensor + " " + component_type + " Component for XYZ")
+    plt.ylabel("Speed (m/s)")
+    plt.xlabel("Time (s)")
+    plt.savefig(get_results_directory() + "/" + device + "_" + component_type + "_" + "component" + "_sys_alignment" + ".png")
+
 def coordinate_sys_alignment(sensor_x, sensor_y, sensor_z):
     '''
     Transform accel & gyro data into orientation.
