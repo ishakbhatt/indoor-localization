@@ -16,10 +16,9 @@ import matplotlib
 matplotlib.use("agg")
 import matplotlib.pyplot as plt
 from tensorflow import keras
-from datetime import datetime, timezone
 import tensorflow as tf
+from datetime import datetime, timezone
 import parse
-from sklearn.model_selection import train_test_split
 
 ###########################################
 ##                                       ##
@@ -137,7 +136,7 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     model = keras.Sequential()
 
     # CASCADED LAYER 1
-    model.add(keras.layers.Conv2D(filters=16, kernel_size=(2, 2), padding='same'))
+    model.add(keras.layers.Conv2D(filters=16, kernel_size=(2, 2), padding='same', input_shape=(num_train_samples, 4, 1)))
     # batch normalization layer to lower sensitivity to network initialization
     model.add(keras.layers.BatchNormalization())
     # ReLU activation layer
@@ -183,12 +182,12 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     model.compile(loss='mean_squared_error', metrics=['accuracy'])
 
     # fit the model (Train) # TODO: tune epoch and batch_size
-
-    velocity_train = np.column_stack((velocity_train, velocity_train, velocity_train, velocity_train))
-    velocity_train = velocity_train.reshape(velocity_train.shape[0], 2, 2, 1)
-    combined_train = combined_train.reshape(combined_train.shape[0], 2, 2, 1)
     # TODO: determine classes for vel train, epochs and batch size and regressor
-    model.fit(combined_train, velocity_train, validation_data=(combined_train, velocity_train), epochs=1, batch_size=combined_train.shape[0])
+    c_train = tf.reshape(combined_train, (num_train_samples, 1, 4, 1))
+    v_train = tf.reshape(velocity_train, (num_train_samples, 1, 1, 1))
+
+
+    model.fit(c_train, v_train, validation_data=(combined_test, velocity_test), epochs=10, batch_size=45)
 
     # Summary
     model.summary()
@@ -680,6 +679,7 @@ def main():
 
     print("Prediction complete.")
 
+    # Analysis post prediction
     print("Extracting 3 separate paths for analysis.")
     accel_test_iphone_1, gyro_test_iphone_1 = parse.parse_dcnn_data('test', 'iphone', 1)
     iphone_time_1 = (accel_test_iphone_1[:, 0]-accel_test_iphone_1[0, 0])[accel_test_iphone_1.shape[0]-1]
@@ -725,5 +725,15 @@ def main():
 
     print("Finished.")
 
+
 if __name__ == "__main__": 
     main()
+    # Questions
+    # What does the 12500 x 45 x 4 x 1 refer to?
+    # 12500 -- number of samples
+    # 45 -- ??? ask about this
+    # 4 -- accel vertical, accel horizontal, gyro vertical, gyro horizontal
+    # 1
+
+
+

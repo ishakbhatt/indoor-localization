@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="1e0f3918-64d3-4e23-beee-33bce121ecb2" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/indoor-localization.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/indoor-localization.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/other.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest1_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest1_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest1_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest1_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest1_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest1_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest1_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest1_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest2_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest2_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest2_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest2_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest2_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest2_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest2_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest2_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest3_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest3_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest3_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest3_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest3_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest3_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest3_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTest3_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain1_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain1_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain1_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain1_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain1_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain1_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain1_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain1_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain2_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain2_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain2_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain2_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain2_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain2_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain2_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain2_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain3_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain3_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain3_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain3_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain3_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain3_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain3_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain3_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain4_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain4_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain4_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain4_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain4_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain4_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain4_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain4_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain5_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain5_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain5_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain5_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain5_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain5_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain5_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain5_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain6_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain6_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain6_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain6_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain6_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain6_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain6_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain6_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain7_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain7_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain7_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain7_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain7_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain7_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain7_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneAccelTrain7_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest1_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest1_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest1_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest1_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest1_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest1_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest1_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest1_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest2_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest2_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest2_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest2_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest2_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest2_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest2_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest2_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest3_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest3_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest3_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest3_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest3_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest3_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest3_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTest3_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain1_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain1_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain1_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain1_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain1_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain1_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain1_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain1_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain2_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain2_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain2_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain2_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain2_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain2_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain2_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain2_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain3_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain3_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain3_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain3_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain3_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain3_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain3_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain3_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain4_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain4_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain4_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain4_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain4_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain4_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain4_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain4_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain5_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain5_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain5_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain5_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain5_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain5_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain5_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain5_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain6_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain6_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain6_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain6_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain6_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain6_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain6_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain6_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain7_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain7_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain7_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain7_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain7_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain7_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain7_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iPhoneGyroTrain7_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest1_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest1_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest1_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest1_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest1_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest1_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest1_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest1_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest2_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest2_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest2_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest2_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest2_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest2_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest2_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest2_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest3_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest3_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest3_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest3_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest3_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest3_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest3_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTest3_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain1_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain1_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain1_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain1_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain1_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain1_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain1_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain1_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain2_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain2_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain2_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain2_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain2_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain2_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain2_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain2_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain3_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain3_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain3_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain3_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain3_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain3_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain3_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain3_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain4_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain4_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain4_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain4_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain4_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain4_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain4_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain4_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain5_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain5_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain5_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain5_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain5_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain5_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain5_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain5_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain6_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain6_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain6_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain6_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain6_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain6_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain6_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain6_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain7_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain7_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain7_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain7_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain7_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain7_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain7_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchAccelTrain7_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest1_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest1_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest1_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest1_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest1_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest1_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest1_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest1_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest2_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest2_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest2_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest2_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest2_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest2_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest2_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest2_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest3_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest3_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest3_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest3_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest3_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest3_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest3_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTest3_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain1_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain1_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain1_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain1_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain1_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain1_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain1_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain1_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain2_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain2_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain2_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain2_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain2_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain2_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain2_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain2_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain3_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain3_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain3_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain3_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain3_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain3_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain3_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain3_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain4_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain4_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain4_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain4_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain4_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain4_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain4_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain4_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain5_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain5_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain5_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain5_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain5_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain5_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain5_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain5_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain6_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain6_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain6_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain6_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain6_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain6_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain6_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain6_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain7_PSD.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain7_PSD.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain7_X_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain7_X_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain7_Y_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain7_Y_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain7_Z_filtered.png" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/results/iWatchGyroTrain7_Z_filtered.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/velocity_estimation/user_velocity.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/velocity_estimation/user_velocity.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1sHJSNWpd9V211il7fvDpFIOUyl" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RunManager">
+    <configuration name="user_velocity" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="indoor-localization" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/dev/velocity_estimation" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dev/velocity_estimation/user_velocity.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.user_velocity" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1e0f3918-64d3-4e23-beee-33bce121ecb2" name="Default Changelist" comment="" />
+      <created>1620523584156</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1620523584156</updated>
+      <workItem from="1627158542201" duration="9000" />
+    </task>
+    <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dev/velocity_estimation/user_velocity.py</url>
+          <line>704</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dev/velocity_estimation/user_velocity.py</url>
+          <line>675</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dev/velocity_estimation/user_velocity.py</url>
+          <line>670</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dev/velocity_estimation/user_velocity.py</url>
+          <line>199</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dev/velocity_estimation/user_velocity.py</url>
+          <line>189</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dev/velocity_estimation/user_velocity.py</url>
+          <line>181</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dev/velocity_estimation/user_velocity.py</url>
+          <line>113</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dev/velocity_estimation/user_velocity.py</url>
+          <line>120</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dev/velocity_estimation/user_velocity.py</url>
+          <line>135</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dev/velocity_estimation/user_velocity.py</url>
+          <line>196</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dev/velocity_estimation/user_velocity.py</url>
+          <line>138</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dev/velocity_estimation/user_velocity.py</url>
+          <line>144</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dev/velocity_estimation/user_velocity.py</url>
+          <line>160</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dev/velocity_estimation/user_velocity.py</url>
+          <line>185</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
