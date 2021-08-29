@@ -185,27 +185,23 @@ def deep_neural_network(horizontal_accel_train, vertical_accel_train, horizontal
     # TODO: determine classes for vel train, epochs and batch size and regressor
     c_train = tf.reshape(combined_train, (num_train_samples, 1, 4, 1))
     v_train = tf.reshape(velocity_train, (num_train_samples, 1, 1, 1))
+    c_test = tf.reshape(combined_test, (num_test_samples, 1, 4, 1))
+    v_test = tf.reshape(velocity_test, (num_test_samples, 1, 1, 1))
 
-
-    model.fit(c_train, v_train, validation_data=(combined_test, velocity_test), epochs=10, batch_size=45)
+    model.fit(c_train, v_train, validation_data=(c_test, v_test), epochs=100, batch_size=45)
 
     # Summary
     model.summary()
-
+    # --- IGNORE FOR NOW ---
     # evaluate the model
     print("Evaluate on test data")
-    combined_test = combined_test.reshape(combined_test.shape[0], 2, 2, 1)
-    velocity_test = np.column_stack((velocity_test, velocity_test, velocity_test, velocity_test))
-    velocity_test = velocity_test.reshape(velocity_test.shape[0], 2, 2, 1)
-    results = model.evaluate(combined_test, velocity_test, batch_size=128) # todo: fix
+    results = model.evaluate(c_test, v_test, batch_size=128)
     print("test loss, test acc:", results)
 
     # Generate predictions (probabilities -- the output of the last layer)
     # on new data using `predict`
     print("Generate predictions for 3 paths...")
     predictions = model.predict(combined_test)
-    predictions = predictions.reshape([predictions.shape[0], 4])
-    predictions = predictions[:, 0]
 
     return predictions
 
